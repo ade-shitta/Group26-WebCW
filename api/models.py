@@ -47,7 +47,7 @@ class User(AbstractUser):
         related_name='related_to'
     )
 
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
 
     def __str__(self) -> str:
         return self.username
@@ -61,6 +61,19 @@ class User(AbstractUser):
             'hobbies': [hobby.to_dict() for hobby in self.hobbies.all()],
             'age': self.age,
         }
+
+    def get_full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+    
+    def update_password(self, new_password: str) -> None:
+        self.set_password(new_password)
+        self.save()
+    
+    def update_profile(self, data: Dict[str, Any]) -> None:
+        for field, value in data.items():
+            if hasattr(self, field):
+                setattr(self, field, value)
+        self.save()
 
     @property
     def age(self) -> int:
