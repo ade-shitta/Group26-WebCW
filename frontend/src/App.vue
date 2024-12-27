@@ -1,22 +1,16 @@
 <template>
-    <main class="container pt-4">
-        <div>
-            <router-link
-                class=""
-                :to="{name: 'Main Page'}"
-            >
-                Main Page
-            </router-link>
-            |
-            <router-link
-                class=""
-                :to="{name: 'Other Page'}"
-            >
-                Other Page
-            </router-link>
-        </div>
+        <!-- Header -->
+        <header class ="main-header">
+            <div class="nav-links">
+                <router-link class="" :to="{ name: 'Profile Page' }">
+                    Profile Page
+                </router-link>
+                <router-link class="" :to="{ name: 'Other Page' }">
+                    Other Page
+                </router-link>
+            </div>
+        </header>
         <RouterView class="flex-shrink-0" />
-    </main>
 </template>
 
 <script lang="ts">
@@ -30,4 +24,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.main-header{
+    background-color:#88D2FA;
+    margin: 0 rem;
+    padding: 1.5rem;
+}
+
+.nav-links{
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+                 
+}
+
 </style>
