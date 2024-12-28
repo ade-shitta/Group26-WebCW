@@ -1,4 +1,5 @@
 <template>
+  <!-- Profile Card -->
   <div class="card">
     <div class="card-body">
       <img src="..." class="avatar" alt="..."></img>
@@ -28,20 +29,95 @@
       <div class="hobbies">
         <h6>My Hobbies</h6>
       </div>
-      <a href="#" class="card-link">Edit Profile</a>
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"> Edit Profile </button>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal-->
+  <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProfileLabel">Edit Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>Name</label>
+              <input type="text" class="form-control" v-model="editForm.name">
+            </div>
+            <div class="mb-3">
+              <label>Username</label>
+              <input type="text" class="form-control" v-model="editForm.username">
+            </div>
+            <div class="mb-3">
+              <label>Email</label>
+              <input type="email" class="form-control" v-model="editForm.email">
+            </div>
+            <div class="mb-3">
+              <label>Date of Birth</label>
+              <input type="date" class="form-control" v-model="editForm.dob">
+            </div>
+            <div class="mb-3">
+              <label>Biography</label>
+              <textarea class="form-control" v-model="editForm.bio" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+              <label>Hobbies</label>
+              <select multiple class="form-control" v-model="editForm.selectedHobbies">
+                <option v-for="hobby in hobbies" :key="hobby.id" :value="hobby.id">
+                  {{ hobby.name }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label>Add New Hobby</label>
+              <div class="input-group">
+                <input type="text" class="form-control" v-model="newHobby">
+                <button class="btn btn-outline-secondary" type="button" @click="addHobby">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from "vue";
-
+//not actually saved to backend yet 
 export default defineComponent({
   data() {
     return {
-      title: "Profile Page",
+      showModal: false,
+      //object for editing profile 
+      editForm: {
+        name: "",
+        username: "",
+        email: "",
+        date_of_birth: "",
+        bio: "",
+        hobbies: []
+      },
+      newHobby: "",
+    };
+  },
+  methods: {
+    //add new hobby
+    addHobby() {
+    },
+    saveChanges() {
+      this.showModal = false;
     }
   }
-})
+});
 </script>
 
 
@@ -68,14 +144,17 @@ export default defineComponent({
   align-self: center;
 }
 
-.card-link {
+.btn-primary{
+  display: flex;
+  flex-direction: columns;
+  text-decoration: none;
   margin-top: auto;
   background-color: #88D2FA;
   color: black;
   padding: 8px 16px;
   border-radius: 8px;
-  text-decoration: none;
   align-self: center;
+  border: none;
 }
 
 .card-link:hover {
@@ -113,12 +192,12 @@ export default defineComponent({
   font-weight: 500;
 }
 
-.hobbies h6{
+.hobbies h6 {
   font-weight: normal;
   justify-self: center;
 }
 
-.hobbies{
+.hobbies {
   align-self: center;
   align-content: center;
   border: 1px solid grey;
@@ -126,5 +205,4 @@ export default defineComponent({
   width: 100%;
   min-height: 15rem;
   margin: 1rem;
-}
-</style>
+}</style>

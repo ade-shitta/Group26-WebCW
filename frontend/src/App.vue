@@ -2,11 +2,14 @@
         <!-- Header -->
         <header class ="main-header">
             <div class="nav-links">
-                <router-link class="" :to="{ name: 'Profile Page' }">
-                    Profile Page
+                <router-link class="main-link" :to="{ name: 'Profile Page' }">
+                    Profile
                 </router-link>
-                <router-link class="" :to="{ name: 'Other Page' }">
-                    Other Page
+                <router-link class="main-link" :to="{ name: 'Other Page' }">
+                    Friends
+                </router-link>
+                <router-link class="main-link" :to="{ name: 'Other Page' }">
+                    Other Users
                 </router-link>
             </div>
         </header>
@@ -31,11 +34,15 @@ export default defineComponent({
     padding: 1.5rem;
 }
 
-.nav-links{
+.nav-links, .main-link{
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
-                 
+    text-decoration: none;               
+}
+
+.main-link:hover{
+    font-weight: 500;
 }
 
 </style>
