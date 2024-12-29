@@ -5,10 +5,10 @@
                 <router-link class="main-link" :to="{ name: 'Profile Page' }">
                     Profile
                 </router-link>
-                <router-link class="main-link" :to="{ name: 'Other Page' }">
+                <router-link class="main-link" :to="{ name: 'Friends Page' }">
                     Friends
                 </router-link>
-                <router-link class="main-link" :to="{ name: 'Other Page' }">
+                <router-link class="main-link" :to="{ name: 'Other Users Page' }">
                     Other Users
                 </router-link>
             </div>

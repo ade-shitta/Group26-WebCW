@@ -50,7 +50,7 @@
             </div>
             <div class="mb-3">
               <label>Last Name</label>
-              <input type="text" class="form-control" v-model="editForm.first_name">
+              <input type="text" class="form-control" v-model="editForm.last_name">
             </div>
             <div class="mb-3">
               <label>Username</label>
@@ -121,11 +121,34 @@ export default defineComponent({
     };
   },
   methods: {
+    validateForm(){
+      const errors = [];
+      //email regex pattern
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+      if (!emailPattern.test(this.editForm.email)){
+        errors.push('Please enter a valid email address');
+      }
+      if (!this.editForm.username.trim()){
+        errors.push('Username is required');
+      }
+      if (!this.editForm.first_name.trim()){
+        errors.push('First name is required');
+      }
+      if (!this.editForm.date_of_birth){
+        errors.push('First name is required');
+      }
+      return errors;
+    },
     //add new hobby
     addHobby() {
     },
     saveChanges() {
-      this.showModal = false;
+      const errors = this.validateForm();
+      if (errors.length){ //display errors to user 
+        return;
+      }
+      this.showModal = false; // save when backend done 
     }
   }
 });
