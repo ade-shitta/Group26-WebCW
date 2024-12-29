@@ -2,7 +2,7 @@
   <!-- Profile Card -->
   <div class="card">
     <div class="card-body">
-      <img src="..." class="avatar" alt="..."></img>
+      <img src="..." class="avatar" alt="..."/>
       <h5 class="card-title">Name</h5>
       <h6 class="card-subtitle mb-2 text-muted">@username</h6>
       <div class="dob-email-container">
@@ -45,8 +45,12 @@
         <div class="modal-body">
           <div class="modal-body">
             <div class="mb-3">
-              <label>Name</label>
-              <input type="text" class="form-control" v-model="editForm.name">
+              <label>First Name</label>
+              <input type="text" class="form-control" v-model="editForm.first_name">
+            </div>
+            <div class="mb-3">
+              <label>Last Name</label>
+              <input type="text" class="form-control" v-model="editForm.first_name">
             </div>
             <div class="mb-3">
               <label>Username</label>
@@ -58,15 +62,15 @@
             </div>
             <div class="mb-3">
               <label>Date of Birth</label>
-              <input type="date" class="form-control" v-model="editForm.dob">
+              <input type="date" class="form-control" v-model="editForm.date_of_birth">
             </div>
             <div class="mb-3">
               <label>Biography</label>
-              <textarea class="form-control" v-model="editForm.bio" rows="3"></textarea>
+              <textarea class="form-control" v-model="editForm.profile.bio" rows="3"></textarea>
             </div>
             <div class="mb-3">
               <label>Hobbies</label>
-              <select multiple class="form-control" v-model="editForm.selectedHobbies">
+              <select multiple class="form-control" v-model="editForm.hobbies">
                 <option v-for="hobby in hobbies" :key="hobby.id" :value="hobby.id">
                   {{ hobby.name }}
                 </option>
@@ -92,6 +96,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import type {User, Hobby} from '../interfaces'; 
+
 //not actually saved to backend yet 
 export default defineComponent({
   data() {
@@ -99,14 +105,19 @@ export default defineComponent({
       showModal: false,
       //object for editing profile 
       editForm: {
-        name: "",
         username: "",
         email: "",
         date_of_birth: "",
-        bio: "",
+        first_name: "",
+        last_name: "",
+        profile: {
+          bio: "",
+          avatar: null
+        },
         hobbies: []
-      },
+      } as User, //match the User interface 
       newHobby: "",
+      hobbies: [] as Hobby[] //match Hobby interface 
     };
   },
   methods: {
