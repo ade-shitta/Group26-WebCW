@@ -43,7 +43,7 @@ class User(AbstractUser):
         to='self',
         blank=True,
         symmetrical=False,
-        through='FriendRequest',
+        through='Friends',
         related_name='related_to'
     )
 
@@ -64,16 +64,6 @@ class User(AbstractUser):
 
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
-    
-    def update_password(self, new_password: str) -> None:
-        self.set_password(new_password)
-        self.save()
-    
-    def update_profile(self, data: Dict[str, Any]) -> None:
-        for field, value in data.items():
-            if hasattr(self, field):
-                setattr(self, field, value)
-        self.save()
 
     @property
     def age(self) -> int:
@@ -88,7 +78,7 @@ class User(AbstractUser):
     @property
     def friend_count(self) -> int:
         '''Count of confirmed friends'''
-        return FriendRequest.objects.filter(
+        return Friends.objects.filter(
             (models.Q(from_user=self) | models.Q(to_user=self)) &
             models.Q(status='accepted')
         ).count()
@@ -153,43 +143,9 @@ class Hobby(models.Model):
         }
 
 
-class FriendRequest(models.Model):
+class Friends(models.Model):
     '''
     Through model for managing friend relationships between users
     '''
-    from_user = models.ForeignKey(
-        User,
-        related_name='sent_requests',
-        on_delete=models.CASCADE
-    )
-    to_user = models.ForeignKey(
-        User,
-        related_name='received_requests',
-        on_delete=models.CASCADE
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=[
-            ('pending', 'Pending'),
-            ('accepted', 'Accepted'),
-            ('rejected', 'Rejected')
-        ],
-        default='pending'
-    )
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        unique_together = ('from_user', 'to_user')
-
-    def __str__(self) -> str:
-        return f"Friend request from {self.from_user} to {self.to_user}"
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            'id': self.id,
-            'from_user': self.from_user.username,
-            'to_user': self.to_user.username,
-            'status': self.status,
-            'created_at': self.created_at.strftime("%Y-%m-%d %H:%M"),
-        }
+    pass
     
