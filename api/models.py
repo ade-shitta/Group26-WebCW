@@ -32,7 +32,8 @@ class User(AbstractUser):
         to='Profile',
         blank=True,
         null=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='user_profile'
     )
     hobbies = models.ManyToManyField(
         to='Hobby',
@@ -92,11 +93,16 @@ class Profile(models.Model):
     '''
     Profile model for additional user information
     '''
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='user_profile'
+    )
     bio = models.CharField(max_length=4096, blank=True)
     avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"Profile for {self.user_check}"
+        return f"Profile for {self.user.username}"
 
     def to_dict(self) -> Dict[str, Any]:
         return {

@@ -20,6 +20,16 @@ from django.http import HttpResponse
 
 from .views import main_spa
 
+from django.contrib.auth import views as auth_views
+from . import views
+
+
 urlpatterns = [
-    path('', main_spa),
+    path('', views.main_spa, name='home'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('signup/', views.signup_view, name='signup'),
+    path('api/profile/', views.profile_api, name='profile_api'),
+    path('api/password/', views.password_change, name='password_change'),
+    path('api/hobbies/', views.hobby_api, name='hobby_api'),
 ]

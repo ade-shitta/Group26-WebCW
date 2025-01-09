@@ -1,0 +1,24 @@
+{% extends "api/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Login - Hobbies App{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="text-center">Login</h2>
+    </div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+        <hr>
+        <p class="text-center">
+            Don't have an account? <a href="{% url 'signup' %}">Sign up</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
