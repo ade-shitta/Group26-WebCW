@@ -2,7 +2,7 @@
   <!-- Profile Card -->
   <div class="card">
     <div class="card-body">
-      <img src="..." class="avatar" alt="..."/>
+      <img src="#" class="avatar" alt="Profile avatar"/>
       <h5 class="card-title">Name</h5>
       <h6 class="card-subtitle mb-2 text-muted">@username</h6>
       <div class="dob-email-container">
