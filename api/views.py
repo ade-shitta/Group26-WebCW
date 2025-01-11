@@ -4,6 +4,10 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
+from django.db import models
+from django.db.models import Count
+from django.http import HttpResponse
+from .models import User, Hobby
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -105,3 +109,29 @@ def hobby_api(request):
         hobby.save()
         return JsonResponse({'status': 'success', 'hobby': hobby.to_dict()})
     return JsonResponse({'status': 'error', 'errors': form.errors})
+
+@login_required
+def similar_users_view(request):
+    """
+    API view to find users with the most similar hobbies.
+    """
+    current_user = request.user
+
+    # Exclude the current user and annotate with the number of common hobbies
+    similar_users = (
+        User.objects.exclude(id=current_user.id)
+        .annotate(common_hobbies=Count('hobbies', filter=models.Q(hobbies__in=current_user.hobbies.all())))
+        .order_by('-common_hobbies')
+    )
+
+    # Convert the results into a dictionary for JSON response
+    similar_users_data = [
+        {
+            "username": user.username,
+            "common_hobbies": user.common_hobbies,
+            "hobbies": [hobby.name for hobby in user.hobbies.all()]
+        }
+        for user in similar_users
+    ]
+
+    return JsonResponse(similar_users_data, safe=False)

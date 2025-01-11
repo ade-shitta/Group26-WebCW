@@ -23,6 +23,9 @@ from .views import main_spa
 from django.contrib.auth import views as auth_views
 from . import views
 
+from django.urls import path
+from .views import add_data
+
 
 urlpatterns = [
     path('', views.main_spa, name='home'),
@@ -32,4 +35,6 @@ urlpatterns = [
     path('api/profile/', views.profile_api, name='profile_api'),
     path('api/password/', views.password_change, name='password_change'),
     path('api/hobbies/', views.hobby_api, name='hobby_api'),
+    path('api/similar-users/', views.similar_users_view, name='similar_users'),
+    path('add_data/', add_data, name='add_data'),
 ]
