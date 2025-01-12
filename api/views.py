@@ -5,6 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.db import models
+from django.db.models import Count
+from django.core.paginator import Paginator
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -110,3 +113,40 @@ def hobby_api(request):
         hobby.save()
         return JsonResponse({'status': 'success', 'hobby': hobby.to_dict()})
     return JsonResponse({'status': 'error', 'errors': form.errors})
+
+@login_required
+def similar_users_view(request):
+    """
+    API view to find users with the most similar hobbies with pagination.
+    """
+    current_user = request.user
+
+    # Exclude the current user and annotate with the number of common hobbies
+    similar_users = (
+        User.objects.exclude(id=current_user.id)
+        .annotate(common_hobbies=Count('hobbies', filter=models.Q(hobbies__in=current_user.hobbies.all())))
+        .order_by('-common_hobbies')
+    )
+
+    # Paginate the results
+    paginator = Paginator(similar_users, 10)
+    page_number = request.GET.get('page', 1)  
+    page_obj = paginator.get_page(page_number)
+
+    # Convert the results into a dictionary for JSON response
+    similar_users_data = [
+        {
+            "username": user.username,
+            "common_hobbies": user.common_hobbies,
+            "hobbies": [hobby.name for hobby in user.hobbies.all()]
+        }
+        for user in page_obj.object_list
+    ]
+
+    return JsonResponse({
+        "page": page_obj.number,
+        "total_pages": paginator.num_pages,
+        "total_users": paginator.count,
+        "users_per_page": paginator.per_page,
+        "similar_users": similar_users_data,
+    })
