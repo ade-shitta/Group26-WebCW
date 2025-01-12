@@ -27,7 +27,7 @@
         <p class="card-text">My name is test user and I love tennis and sketching.</p>
       </div>
       <div class="hobbies">
-        <h6>My Hobbies</h6>
+        <h6>My Hobbies!</h6>
       </div>
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"> Edit Profile </button>

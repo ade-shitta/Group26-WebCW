@@ -4,6 +4,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from django.db import models
 from django.db.models import Count
 from django.http import HttpResponse
@@ -42,8 +43,10 @@ def signup_view(request):
 def login_view(request):
     """Handle user login"""
     if request.user.is_authenticated:
-        return redirect('home')
-        
+        if settings.DEBUG:  # Development mode
+            return redirect('http://localhost:5173')
+        return redirect('home')  # Production mode
+         
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -52,7 +55,9 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                if settings.DEBUG:  # Development mode
+                    return redirect('http://localhost:5173')
+                return redirect('home')  # Production mode
             form.add_error(None, 'Invalid username or password')
     else:
         form = LoginForm()
