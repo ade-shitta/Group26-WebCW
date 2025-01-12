@@ -7,8 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db import models
 from django.db.models import Count
-from django.http import HttpResponse
-from .models import User, Hobby
 from django.core.paginator import Paginator
 
 from .models import User, Profile, Hobby
