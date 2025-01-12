@@ -9,6 +9,7 @@ from django.db import models
 from django.db.models import Count
 from django.http import HttpResponse
 from .models import User, Hobby
+from django.core.paginator import Paginator
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -118,7 +119,7 @@ def hobby_api(request):
 @login_required
 def similar_users_view(request):
     """
-    API view to find users with the most similar hobbies.
+    API view to find users with the most similar hobbies with pagination.
     """
     current_user = request.user
 
@@ -129,6 +130,11 @@ def similar_users_view(request):
         .order_by('-common_hobbies')
     )
 
+    # Paginate the results
+    paginator = Paginator(similar_users, 10)
+    page_number = request.GET.get('page', 1)  
+    page_obj = paginator.get_page(page_number)
+
     # Convert the results into a dictionary for JSON response
     similar_users_data = [
         {
@@ -136,7 +142,13 @@ def similar_users_view(request):
             "common_hobbies": user.common_hobbies,
             "hobbies": [hobby.name for hobby in user.hobbies.all()]
         }
-        for user in similar_users
+        for user in page_obj.object_list
     ]
 
-    return JsonResponse(similar_users_data, safe=False)
+    return JsonResponse({
+        "page": page_obj.number,
+        "total_pages": paginator.num_pages,
+        "total_users": paginator.count,
+        "users_per_page": paginator.per_page,
+        "similar_users": similar_users_data,
+    })
