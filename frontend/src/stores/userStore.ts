@@ -16,16 +16,17 @@ export const useUserStore = defineStore('user', {
                 const response = await fetch('http://localhost:8000/api/profile/', {
                     credentials: 'include'
                 });
-                if (response.status === 403 || response.status === 401) {
-                    // Redirect to login if unauthorized
-                    window.location.href = 'http://localhost:8000/login/';
-                    return;
+                if (!response.ok) {
+                    if (response.status === 403 || response.status === 401) {
+                        window.location.href = 'http://localhost:8000/login/';
+                        return;
+                    }
+                    throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
                 this.userData = data;
             } catch (error) {
                 console.error('Error fetching profile:', error);
-                // Redirect to login on error
                 window.location.href = 'http://localhost:8000/login/';
             }
         },
