@@ -55,6 +55,8 @@ class User(AbstractUser):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            'first_name': self.first_name,  
+            'last_name': self.last_name,    
             'username': self.username,
             'email': self.email,
             'date_of_birth': self.date_of_birth.strftime("%Y-%m-%d") if self.date_of_birth else None,

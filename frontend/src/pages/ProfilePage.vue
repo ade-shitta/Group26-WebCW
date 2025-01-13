@@ -2,9 +2,9 @@
   <!-- Profile Card -->
   <div class="card">
     <div class="card-body">
-      <img src="#" class="avatar" alt="Profile avatar"/>
-      <h5 class="card-title">Name</h5>
-      <h6 class="card-subtitle mb-2 text-muted">@username</h6>
+      <img src="#" class="avatar" alt="Profile avatar" />
+      <h5 class="card-title">{{ userStore.userData?.first_name }} {{ userStore.userData?.last_name }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">@{{ userStore.userData?.username }}</h6>
       <div class="dob-email-container">
         <div class="email-container">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="email-icon"
@@ -12,7 +12,7 @@
             <path
               d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
           </svg>
-          <div class="email-text text-muted">username@gmail.com</div>
+          <div class="email-text text-muted">{{ userStore.userData?.email }}</div>
         </div>
         <div class="dob-container">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="calendar-icon"
@@ -20,17 +20,18 @@
             <path
               d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
           </svg>
-          <div class="dob-text text-muted">day/month/year</div>
+          <div class="dob-text text-muted">{{ userStore.userData?.date_of_birth }}</div>
         </div>
       </div>
       <div class="biography">
         <p class="card-text">My name is test user and I love tennis and sketching.</p>
       </div>
       <div class="hobbies">
-        <h6>My Hobbies!</h6>
+        <h6>My Hobbies?</h6>
       </div>
-        <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"> Edit Profile </button>
+      <!-- Button trigger modal -->
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"> Edit
+        Profile </button>
     </div>
   </div>
 
@@ -96,10 +97,15 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type {User, Hobby} from '../interfaces'; 
+import type { User, Hobby } from '../interfaces';
+import { useUserStore } from '../stores/userStore';
 
-//not actually saved to backend yet 
+
 export default defineComponent({
+  setup() {
+    const userStore = useUserStore();  // Add this
+    return { userStore };  // Add this
+  },
   data() {
     return {
       showModal: false,
@@ -120,22 +126,25 @@ export default defineComponent({
       hobbies: [] as Hobby[] //match Hobby interface 
     };
   },
+  mounted() {
+    this.userStore.fetchUserProfile();
+  },
   methods: {
-    validateForm(){
+    validateForm() {
       const errors = [];
       //email regex pattern
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  
-      if (!emailPattern.test(this.editForm.email)){
+
+      if (!emailPattern.test(this.editForm.email)) {
         errors.push('Please enter a valid email address');
       }
-      if (!this.editForm.username.trim()){
+      if (!this.editForm.username.trim()) {
         errors.push('Username is required');
       }
-      if (!this.editForm.first_name.trim()){
+      if (!this.editForm.first_name.trim()) {
         errors.push('First name is required');
       }
-      if (!this.editForm.date_of_birth){
+      if (!this.editForm.date_of_birth) {
         errors.push('First name is required');
       }
       return errors;
@@ -143,12 +152,23 @@ export default defineComponent({
     //add new hobby
     addHobby() {
     },
-    saveChanges() {
+    async saveChanges() {
       const errors = this.validateForm();
-      if (errors.length){ //display errors to user 
+      if (errors.length) {
         return;
       }
-      this.showModal = false; // save when backend done 
+
+      try {
+        const result = await this.userStore.updateProfile(this.editForm);
+        if (result.success) {
+          this.showModal = false;
+        } else {
+          // Handle error
+          console.error('Failed to update profile');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   }
 });
@@ -178,7 +198,7 @@ export default defineComponent({
   align-self: center;
 }
 
-.btn-primary{
+.btn-primary {
   display: flex;
   flex-direction: columns;
   text-decoration: none;
@@ -239,4 +259,5 @@ export default defineComponent({
   width: 100%;
   min-height: 15rem;
   margin: 1rem;
-}</style>
+}
+</style>
