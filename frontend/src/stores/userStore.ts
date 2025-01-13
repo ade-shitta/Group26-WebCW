@@ -16,10 +16,17 @@ export const useUserStore = defineStore('user', {
                 const response = await fetch('http://localhost:8000/api/profile/', {
                     credentials: 'include'
                 });
+                if (response.status === 403 || response.status === 401) {
+                    // Redirect to login if unauthorized
+                    window.location.href = 'http://localhost:8000/login/';
+                    return;
+                }
                 const data = await response.json();
                 this.userData = data;
             } catch (error) {
                 console.error('Error fetching profile:', error);
+                // Redirect to login on error
+                window.location.href = 'http://localhost:8000/login/';
             }
         },
         async updateProfile(updatedData: Partial<User>) {

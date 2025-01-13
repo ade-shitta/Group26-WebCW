@@ -39,13 +39,35 @@ def signup_view(request):
     
     return render(request, 'api/auth/signup.html', {'form': form})
 
+# def login_view(request):
+#     """Handle user login"""
+#     if request.user.is_authenticated:
+#         if settings.DEBUG:  # Development mode
+#             return redirect('http://localhost:5173')
+#         return redirect('home')  # Production mode
+         
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data['username']
+#             password = form.cleaned_data['password']
+#             user = authenticate(username=username, password=password)
+#             if user is not None:
+#                 login(request, user)
+#                 if settings.DEBUG:  # Development mode
+#                     return redirect('http://localhost:5173')
+#                 return redirect('home')  # Production mode
+#             form.add_error(None, 'Invalid username or password')
+#     else:
+#         form = LoginForm()
+    
+#     return render(request, 'api/auth/login.html', {'form': form})
+
 def login_view(request):
     """Handle user login"""
     if request.user.is_authenticated:
-        if settings.DEBUG:  # Development mode
-            return redirect('http://localhost:5173')
-        return redirect('home')  # Production mode
-         
+        return redirect('home')
+        
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -54,9 +76,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                if settings.DEBUG:  # Development mode
-                    return redirect('http://localhost:5173')
-                return redirect('home')  # Production mode
+                return redirect('home')
             form.add_error(None, 'Invalid username or password')
     else:
         form = LoginForm()
