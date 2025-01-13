@@ -8,6 +8,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Count
 from django.core.paginator import Paginator
+from django.middleware.csrf import get_token
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -150,3 +151,6 @@ def similar_users_view(request):
         "users_per_page": paginator.per_page,
         "similar_users": similar_users_data,
     })
+
+def get_csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})

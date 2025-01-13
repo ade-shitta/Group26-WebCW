@@ -33,4 +33,5 @@ urlpatterns = [
     path('api/password/', views.password_change, name='password_change'),
     path('api/hobbies/', views.hobby_api, name='hobby_api'),
     path('api/similar-users/', views.similar_users_view, name='similar_users'),
+    path('api/csrf-token/', views.get_csrf_token, name='get-csrf-token'),
 ]
