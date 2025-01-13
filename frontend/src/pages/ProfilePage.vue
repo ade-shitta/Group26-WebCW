@@ -3,8 +3,8 @@
   <div class="card">
     <div class="card-body">
       <img src="#" class="avatar" alt="Profile avatar" />
-      <h5 class="card-title">{{ userData?.first_name }} {{ userData?.last_name }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">@{{ userData?.username }}</h6>
+      <h5 class="card-title">{{ userStore.userData?.first_name }} {{ userStore.userData?.last_name }}</h5>
+      <h6 class="card-subtitle mb-2 text-muted">@{{ userStore.userData?.username }}</h6>
       <div class="dob-email-container">
         <div class="email-container">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="email-icon"
@@ -12,7 +12,7 @@
             <path
               d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
           </svg>
-          <div class="email-text text-muted">{{ userData?.email }}</div>
+          <div class="email-text text-muted">{{ userStore.userData?.email }}</div>
         </div>
         <div class="dob-container">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="calendar-icon"
@@ -20,7 +20,7 @@
             <path
               d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
           </svg>
-          <div class="dob-text text-muted">{{ userData?.date_of_birth }}</div>
+          <div class="dob-text text-muted">{{ userStore.userData?.date_of_birth }}</div>
         </div>
       </div>
       <div class="biography">
@@ -98,12 +98,16 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import type { User, Hobby } from '../interfaces';
+import { useUserStore } from '../stores/userStore';
 
-//not actually saved to backend yet 
+
 export default defineComponent({
+  setup() {
+    const userStore = useUserStore();  // Add this
+    return { userStore };  // Add this
+  },
   data() {
     return {
-      userData: null as User | null,
       showModal: false,
       //object for editing profile 
       editForm: {
@@ -123,22 +127,9 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.fetchUserProfile();
+    this.userStore.fetchUserProfile();
   },
   methods: {
-    // fetch user data 
-    async fetchUserProfile() {
-      try {
-        const response = await fetch('http://localhost:8000/api/profile/', {
-          credentials: 'include'  //session authentication
-        });
-        const data = await response.json();
-        console.log("User data:", data);
-        this.userData = data;
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    },
     validateForm() {
       const errors = [];
       //email regex pattern
@@ -161,12 +152,23 @@ export default defineComponent({
     //add new hobby
     addHobby() {
     },
-    saveChanges() {
+    async saveChanges() {
       const errors = this.validateForm();
-      if (errors.length) { //display errors to user 
+      if (errors.length) {
         return;
       }
-      this.showModal = false; // save when backend done 
+
+      try {
+        const result = await this.userStore.updateProfile(this.editForm);
+        if (result.success) {
+          this.showModal = false;
+        } else {
+          // Handle error
+          console.error('Failed to update profile');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     }
   }
 });
