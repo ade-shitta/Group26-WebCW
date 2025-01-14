@@ -3,7 +3,7 @@
         <h2 class="heading">Users with Similar Hobbies</h2>
 
         <!-- Users List -->
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-md-8">
                 <div v-if="userStore.similarUsers.length" class="list-group">
                     <div v-for="user in userStore.similarUsers" :key="user.username"
@@ -19,6 +19,7 @@
                 <p v-else>No users found with similar hobbies.</p>
 
                 <!-- Pagination -->
+                <!-- only displays if more than 10 users -->
                 <nav v-if="userStore.totalPages > 1" class="mt-4">
                     <ul class="pagination">
                         <li class="page-item" :class="{ disabled: userStore.currentPage === 1 }">
@@ -67,4 +68,5 @@ export default defineComponent({
 .heading {
     text-align: center;
     margin: 1rem;
-}</style>
+}
+</style>
