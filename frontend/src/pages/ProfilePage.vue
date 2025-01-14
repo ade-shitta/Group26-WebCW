@@ -181,6 +181,7 @@ export default defineComponent({
       try {
         const result = await this.userStore.updateProfile(this.editForm);
         if (result.success) {
+          console.log('Form is valid, preparing to send request. Data:', this.editForm);
           this.showModal = false;
         } else {
           // handle error

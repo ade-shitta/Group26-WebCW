@@ -10,6 +10,7 @@ from django.db.models import Count
 from django.core.paginator import Paginator
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
+import json
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -79,13 +80,19 @@ def profile_api(request):
     if request.method == 'GET':
         return JsonResponse(request.user.to_dict())
         
-    # Handle PUT request
-    data = request.POST if request.POST else request.GET
-    form = UserUpdateForm(data, instance=request.user)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error', 'errors': form.errors})
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
+
+        form = UserUpdateForm(data, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'status': 'success'}, status=200)
+        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
 
 @login_required
 def password_change(request):
