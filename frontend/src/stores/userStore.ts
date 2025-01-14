@@ -81,7 +81,7 @@ export const useUserStore = defineStore('user', {
     //fetch paginated list of users with similar hobbies 
     async fetchSimilarUsers(page: number) {
       try {
-        const response = await fetch(`/api/similar-users/?page=${page}`, {
+        const response = await fetch(`/api/users/similar_with_filters/?page=${page}`, {
           credentials: 'include'
         });
         if (!response.ok) {
