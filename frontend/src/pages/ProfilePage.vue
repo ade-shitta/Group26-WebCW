@@ -31,8 +31,10 @@
           <h6>My Hobbies?</h6>
         </div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"> Edit
-          Profile </button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"
+          @click="populateEditForm">
+          Edit Profile
+        </button>
       </div>
     </div>
 
@@ -89,7 +91,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-primary" @click="saveChanges">Save changes</button>
           </div>
         </div>
       </div>
@@ -104,12 +106,12 @@ import { useUserStore } from '../stores/userStore';
 
 
 export default defineComponent({
-  mounted(){
+  mounted() {
     this.userStore.fetchUserProfile();
   },
   setup() {
     const userStore = useUserStore();
-    return { userStore };  
+    return { userStore };
   },
   data() {
     return {
@@ -132,6 +134,22 @@ export default defineComponent({
     };
   },
   methods: {
+    populateEditForm() {
+      if (this.userStore.userData) {
+        this.editForm = {
+          username: this.userStore.userData.username,
+          email: this.userStore.userData.email,
+          date_of_birth: this.userStore.userData.date_of_birth,
+          first_name: this.userStore.userData.first_name,
+          last_name: this.userStore.userData.last_name,
+          profile: {
+            bio: this.userStore.userData.profile?.bio || "",
+            avatar: this.userStore.userData.profile?.avatar || null
+          },
+          hobbies: this.userStore.userData.hobbies || []
+        };
+      }
+    },
     validateForm() {
       const errors = [];
       //email regex pattern
@@ -163,9 +181,10 @@ export default defineComponent({
       try {
         const result = await this.userStore.updateProfile(this.editForm);
         if (result.success) {
+          console.log('Form is valid, preparing to send request. Data:', this.editForm);
           this.showModal = false;
         } else {
-          // Handle error
+          // handle error
           console.error('Failed to update profile');
         }
       } catch (error) {

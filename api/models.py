@@ -10,6 +10,8 @@ class User(AbstractUser):
     to make use of Django's authentication system while adding
     hobby and friend-related functionality
     '''
+    
+    id = models.AutoField(primary_key=True) 
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='custom_user_set',
@@ -55,6 +57,7 @@ class User(AbstractUser):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
+            'id': self.id,
             'first_name': self.first_name,  
             'last_name': self.last_name,    
             'username': self.username,
