@@ -91,7 +91,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="saveChanges">Save changes</button>
+            <button type="button" class="btn btn-primary" @click="saveChanges" data-bs-dismiss="modal">Save changes</button>
           </div>
         </div>
       </div>
@@ -177,7 +177,6 @@ export default defineComponent({
       if (errors.length) {
         return;
       }
-
       try {
         const result = await this.userStore.updateProfile(this.editForm);
         if (result.success) {

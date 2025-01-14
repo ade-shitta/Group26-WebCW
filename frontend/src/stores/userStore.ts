@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { User } from '../interfaces';
+import type { User, SimilarUser, PageData } from '../interfaces';
 
 // Utility function to get CSRF token from cookies
 function getCookie(name: string): string | null {
@@ -11,11 +11,17 @@ function getCookie(name: string): string | null {
 
 type UserState = {
   userData: User | null;
+  similarUsers: SimilarUser[];
+  currentPage: number;
+  totalPages: number;
 };
 
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     userData: null,
+    similarUsers: [],
+    currentPage: 1,
+    totalPages: 1
   }),
 
   actions: {
@@ -72,5 +78,23 @@ export const useUserStore = defineStore('user', {
         return { success: false, error };
       }
     },
-  },
+    //fetch paginated list of users with similar hobbies 
+    async fetchSimilarUsers(page: number) {
+      try {
+        const response = await fetch(`/api/similar-users/?page=${page}`, {
+          credentials: 'include'
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const data: PageData = await response.json();
+        //update store with paginated data 
+        this.similarUsers = data.similar_users;
+        this.currentPage = data.page;
+        this.totalPages = data.total_pages;
+      } catch (error) {
+        console.error('Error fetching similar users:', error);
+      }
+    }
+  }
 });
