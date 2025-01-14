@@ -150,3 +150,50 @@ def similar_users_view(request):
         "users_per_page": paginator.per_page,
         "similar_users": similar_users_data,
     })
+
+from datetime import date, timedelta
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+
+def filtered_users_view(request):
+    """
+    API view to filter users by age with pagination.
+    """
+    min_age = int(request.GET.get("min_age", 0))
+    max_age = int(request.GET.get("max_age", 100))
+    page_number = int(request.GET.get("page", 1))
+
+    # Calculate date range based on age
+    today = date.today()
+    min_birthdate = date(today.year - max_age - 1, today.month, today.day) + timedelta(days=1)
+    max_birthdate = date(today.year - min_age, today.month, today.day)
+
+    # Filter users by date_of_birth
+    filtered_users = User.objects.filter(
+        date_of_birth__range=(min_birthdate, max_birthdate)
+    ).order_by('username') 
+
+    # Paginate results
+    paginator = Paginator(filtered_users, 10) 
+    page_obj = paginator.get_page(page_number)
+
+    # Prepare JSON  data
+    filtered_users_data = [
+        {
+            "username": user.username,
+            "email": user.email,
+            "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
+            "age": user.age,
+            "hobbies": [hobby.name for hobby in user.hobbies.all()],
+        }
+        for user in page_obj.object_list
+    ]
+
+    return JsonResponse({
+        "page": page_obj.number,
+        "total_pages": paginator.num_pages,
+        "total_users": paginator.count,
+        "users_per_page": paginator.per_page,
+        "filtered_users": filtered_users_data,
+    })
+
