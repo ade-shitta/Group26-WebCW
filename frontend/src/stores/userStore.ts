@@ -86,7 +86,7 @@ export const useUserStore = defineStore('user', {
         if (params.minAge) queryParams.append('min_age', params.minAge.toString());
         if (params.maxAge) queryParams.append('max_age', params.maxAge.toString());
 
-        const response = await fetch(`/api/similar-users-with-filters/?${queryParams}`, {
+        const response = await fetch(`/api/users/similar_with_filters/?${queryParams}`, {
           credentials: 'include'
         });
         if (!response.ok) {
