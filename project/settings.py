@@ -145,9 +145,17 @@ INTERNAL_IPS = ['127.0.0.1']
 AUTH_USER_MODEL = 'api.User'
 
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vue dev server
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:8000",
 ]
