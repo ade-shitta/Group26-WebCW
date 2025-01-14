@@ -46,8 +46,6 @@ def signup_view(request):
 def login_view(request):
     """Handle user login"""
     if request.user.is_authenticated:
-        if settings.DEBUG:  # Development mode
-            return redirect('http://localhost:5173')  # Frontend dev server
         return redirect('home')
         
     if request.method == 'POST':
@@ -58,8 +56,6 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                if settings.DEBUG:  # Development mode
-                    return redirect('http://localhost:5173')  # Frontend dev server
                 return redirect('home')
             form.add_error(None, 'Invalid username or password')
     else:

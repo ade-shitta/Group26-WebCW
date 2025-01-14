@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vue-tsc && vite build && mv ../api/static/api/spa/index.html ../api/templates/api/spa/.",
+        "build-windows": "vue-tsc && vite build && move ..\\api\\static\\api\\spa\\index.html ..\\api\\templates\\api\\spa\\.",
         "preview": "vite preview"
     },
     "dependencies": {
