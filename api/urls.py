@@ -34,4 +34,6 @@ urlpatterns = [
     path('api/hobbies/', views.hobby_api, name='hobby_api'),
     path('api/users/similar_with_filters/', views.similar_users_with_filters_view, name='similar_users_with_filters'),
     path('api/csrf-token/', views.get_csrf_token, name='get-csrf-token'),
+    path('friends/', views.main_spa, name='friends'),
+    path('otherusers/',views.main_spa, name = 'otherusers'),
 ]

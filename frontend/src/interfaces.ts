@@ -2,7 +2,7 @@ export interface User {
     username: string;
     email: string; 
     date_of_birth: string | null; 
-    first_name: string, 
+    first_name: string; 
     last_name: string; 
     profile: Profile; 
     hobbies: Hobby[];
