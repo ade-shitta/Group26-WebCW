@@ -24,10 +24,12 @@ export interface SimilarUser {
     username: string;
     common_hobbies: number;
     hobbies: string[];
-}
-
-export interface PageData {
-    similar_users: SimilarUser[];
+  }
+  
+  export interface PageData {
     page: number;
     total_pages: number;
-}
+    total_users: number;
+    users_per_page: number;
+    similar_users: SimilarUser[];
+  }
