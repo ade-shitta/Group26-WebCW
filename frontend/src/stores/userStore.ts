@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
                 });
                 if (!response.ok) {
                     if (response.status === 403 || response.status === 401) {
-                        window.location.href = 'http://localhost:8000/login/';
+                        window.location.href = 'http://localhost:8000/user/login/';
                         return;
                     }
                     throw new Error('Network response was not ok');
@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', {
                 this.userData = data;
             } catch (error) {
                 console.error('Error fetching profile:', error);
-                window.location.href = 'http://localhost:8000/login/';
+                window.location.href = 'http://localhost:8000/user/login/';
             }
         },
         async updateProfile(updatedData: Partial<User>) {

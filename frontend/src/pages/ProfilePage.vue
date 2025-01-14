@@ -131,9 +131,6 @@ export default defineComponent({
       hobbies: [] as Hobby[] //match Hobby interface 
     };
   },
-  mounted() {
-    this.userStore.fetchUserProfile();
-  },
   methods: {
     validateForm() {
       const errors = [];
