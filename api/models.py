@@ -105,27 +105,12 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name='user_profile'
     )
-    bio = models.CharField(max_length=4096, blank=True)
-    avatar = models.ImageField(upload_to='avatars', null=True, blank=True)
 
     def __str__(self) -> str:
         return f"Profile for {self.user.username}"
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
-            'bio': self.bio,
-            'avatar': self.avatar.url if self.avatar else None,
-        }
-
-    @property
-    def has_user(self) -> bool:
-        '''Check if profile is associated with a user'''
-        return hasattr(self, 'user') and self.user is not None
-
-    @property
-    def user_check(self) -> str:
-        '''Return username of associated user or NONE'''
-        return str(self.user) if self.has_user else 'NONE'
+        return {}
 
 
 class Hobby(models.Model):

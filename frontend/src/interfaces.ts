@@ -4,7 +4,6 @@ export interface User {
     date_of_birth: string | null; 
     first_name: string; 
     last_name: string; 
-    profile: Profile; 
     hobbies: Hobby[];
 }
 
