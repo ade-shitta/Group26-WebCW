@@ -51,6 +51,11 @@ class User(AbstractUser):
     )
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name']
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if not hasattr(self, 'profile'):
+            Profile.objects.create(user=self)
 
     def __str__(self) -> str:
         return self.username
@@ -67,9 +72,6 @@ class User(AbstractUser):
             'hobbies': [hobby.to_dict() for hobby in self.hobbies.all()],
             'age': self.age,
         }
-
-    def get_full_name(self) -> str:
-        return f"{self.first_name} {self.last_name}"
 
     @property
     def age(self) -> int:
@@ -159,4 +161,3 @@ class Friends(models.Model):
     Through model for managing friend relationships between users
     '''
     pass
-    
