@@ -3,7 +3,6 @@
     <!-- Profile Card -->
     <div class="card">
       <div class="card-body">
-        <img src="#" class="avatar" alt="Profile avatar" />
         <h5 class="card-title">{{ userStore.userData?.first_name }} {{ userStore.userData?.last_name }}</h5>
         <h6 class="card-subtitle mb-2 text-muted">@{{ userStore.userData?.username }}</h6>
         <div class="dob-email-container">
@@ -23,9 +22,6 @@
             </svg>
             <div class="dob-text text-muted">{{ userStore.userData?.date_of_birth }}</div>
           </div>
-        </div>
-        <div class="biography">
-          <p class="card-text">My name is test user and I love tennis and sketching.</p>
         </div>
         <div class="hobbies">
           <h6>My Hobbies?</h6>
@@ -69,10 +65,6 @@
                 <input type="date" class="form-control" v-model="editForm.date_of_birth">
               </div>
               <div class="mb-3">
-                <label>Biography</label>
-                <textarea class="form-control" v-model="editForm.profile.bio" rows="3"></textarea>
-              </div>
-              <div class="mb-3">
                 <label>Hobbies</label>
                 <select multiple class="form-control" v-model="editForm.hobbies">
                   <option v-for="hobby in hobbies" :key="hobby.id" :value="hobby.id">
@@ -104,7 +96,6 @@ import { defineComponent } from "vue";
 import type { User, Hobby } from '../interfaces';
 import { useUserStore } from '../stores/userStore';
 
-
 export default defineComponent({
   mounted() {
     this.userStore.fetchUserProfile();
@@ -123,10 +114,6 @@ export default defineComponent({
         date_of_birth: "",
         first_name: "",
         last_name: "",
-        profile: {
-          bio: "",
-          avatar: null
-        },
         hobbies: []
       } as User, //match the User interface 
       newHobby: "",
@@ -142,10 +129,6 @@ export default defineComponent({
           date_of_birth: this.userStore.userData.date_of_birth,
           first_name: this.userStore.userData.first_name,
           last_name: this.userStore.userData.last_name,
-          profile: {
-            bio: this.userStore.userData.profile?.bio || "",
-            avatar: this.userStore.userData.profile?.avatar || null
-          },
           hobbies: this.userStore.userData.hobbies || []
         };
       }
@@ -165,12 +148,13 @@ export default defineComponent({
         errors.push('First name is required');
       }
       if (!this.editForm.date_of_birth) {
-        errors.push('First name is required');
+        errors.push('Date of birth is required');
       }
       return errors;
     },
     //add new hobby
     addHobby() {
+      // Add new hobby logic here
     },
     async saveChanges() {
       const errors = this.validateForm();
@@ -193,7 +177,6 @@ export default defineComponent({
   }
 });
 </script>
-
 
 <style scoped>
 .card {
@@ -235,16 +218,6 @@ export default defineComponent({
   color: white;
 }
 
-.avatar {
-  width: 10rem;
-  height: 10rem;
-  border-radius: 50%;
-  object-fit: cover;
-  align-self: center;
-  margin-bottom: 1rem;
-  border: 1px solid grey;
-}
-
 .email-container,
 .dob-container {
   display: flex;
@@ -257,13 +230,6 @@ export default defineComponent({
   display: flex;
   align-self: center;
   gap: 0.5rem;
-}
-
-.biography {
-  margin-top: 0.5rem;
-  align-self: center;
-  padding: 0.5rem;
-  font-weight: 500;
 }
 
 .hobbies h6 {
