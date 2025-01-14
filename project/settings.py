@@ -144,7 +144,16 @@ INTERNAL_IPS = ['127.0.0.1']
 
 AUTH_USER_MODEL = 'api.User'
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vue dev server
     "http://localhost:8000",  # Django dev server
@@ -155,6 +164,11 @@ CORS_TRUSTED_ORIGINS = [
     "http://localhost:8000",  # Django dev server
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://localhost:8000",
+]
+
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -163,8 +177,6 @@ CORS_ALLOW_METHODS = [
     "POST",
     "PUT",
 ]
-
-CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = [
     "accept",

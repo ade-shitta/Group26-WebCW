@@ -11,6 +11,9 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from datetime import date, timedelta
 
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
+import json
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -18,6 +21,7 @@ from .forms import (
     HobbyForm, PasswordChangeCustomForm
 )
 
+@ensure_csrf_cookie
 def main_spa(request: HttpRequest) -> HttpResponse:
     """Vue SPA entry point - only accessible after authentication"""
     if not request.user.is_authenticated:
@@ -45,7 +49,7 @@ def signup_view(request):
 def login_view(request):
     """Handle user login"""
     if request.user.is_authenticated:
-        return redirect('/')
+        return redirect('home')
         
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -55,7 +59,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/')
+                return redirect('home')
             form.add_error(None, 'Invalid username or password')
     else:
         form = LoginForm()
@@ -66,7 +70,7 @@ def login_view(request):
 def logout_view(request):
     """Handle user logout"""
     logout(request)
-    return redirect('/user/login')
+    return redirect('login')
 
 @login_required
 @require_http_methods(['GET', 'PUT'])
@@ -75,13 +79,19 @@ def profile_api(request):
     if request.method == 'GET':
         return JsonResponse(request.user.to_dict())
         
-    # Handle PUT request
-    data = request.POST if request.POST else request.GET
-    form = UserUpdateForm(data, instance=request.user)
-    if form.is_valid():
-        form.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error', 'errors': form.errors})
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
+
+        form = UserUpdateForm(data, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'status': 'success'}, status=200)
+        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
 
 @login_required
 def password_change(request):
@@ -243,3 +253,5 @@ def similar_users_with_filters_view(request):
     })
 
 
+def get_csrf_token(request):
+    return JsonResponse({'csrfToken': get_token(request)})
