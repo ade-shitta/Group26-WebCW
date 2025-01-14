@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Row, Layout, Submit
 from crispy_forms.bootstrap import FormActions
-from .models import User, Hobby
+from .models import User, Hobby, Profile
 
 class LoginForm(forms.Form):
     '''Form for user login'''
@@ -72,6 +72,13 @@ class UserUpdateForm(forms.ModelForm):
         required=False,
         widget=forms.SelectMultiple(attrs={'class': 'form-select'})
     )
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 3})
+    )
+    avatar = forms.ImageField(
+        required=False
+    )
 
     helper = FormHelper()
     helper.form_id = 'profile-update-form'
@@ -81,6 +88,8 @@ class UserUpdateForm(forms.ModelForm):
         Row('first_name', 'last_name', css_class='mb-2'),
         Row('date_of_birth', css_class='mb-2'),
         Row('hobbies', css_class='mb-2'),
+        Row('bio', css_class='mb-2'),
+        Row('avatar', css_class='mb-2'),
         FormActions(
             Submit('update', 'Update Profile', css_class="btn-primary mt-3"),
         )
@@ -89,7 +98,18 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'first_name', 'last_name', 
-                 'date_of_birth', 'hobbies')
+                 'date_of_birth', 'hobbies', 'bio', 'avatar')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.bio = self.cleaned_data['bio']
+            if self.cleaned_data['avatar']:
+                profile.avatar = self.cleaned_data['avatar']
+            profile.save()
+        return user
 
 class HobbyForm(forms.ModelForm):
     '''Form for creating new hobbies'''
