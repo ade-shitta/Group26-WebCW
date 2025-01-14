@@ -23,12 +23,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { RouterView } from "vue-router";
+// import { RouterView } from "vue-router";
 
 export default defineComponent({
     methods: {
         logout() {
-            window.location.href = 'http://localhost:8000/logout/';  // Use the absolute URL
+            window.location.href = 'http://localhost:8000/user/logout/';  // Use the absolute URL
         }
     }
 })
