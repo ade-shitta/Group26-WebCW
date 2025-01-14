@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { User, SimilarUser, PageData } from '../interfaces';
+import type { User, SimilarUser, PageData, FilterParams } from '../interfaces';
 
 // Utility function to get CSRF token from cookies
 function getCookie(name: string): string | null {
@@ -79,22 +79,34 @@ export const useUserStore = defineStore('user', {
       }
     },
     //fetch paginated list of users with similar hobbies 
-    async fetchSimilarUsers(page: number) {
+    async fetchSimilarUsers(params: FilterParams) {
       try {
-        const response = await fetch(`/api/users/similar_with_filters/?page=${page}`, {
+        const queryParams = new URLSearchParams();
+        queryParams.append('page', params.page.toString());
+        if (params.minAge) queryParams.append('min_age', params.minAge.toString());
+        if (params.maxAge) queryParams.append('max_age', params.maxAge.toString());
+
+        const response = await fetch(`/api/similar-users-with-filters/?${queryParams}`, {
           credentials: 'include'
         });
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
         const data: PageData = await response.json();
-        //update store with paginated data 
+
         this.similarUsers = data.similar_users;
         this.currentPage = data.page;
         this.totalPages = data.total_pages;
       } catch (error) {
         console.error('Error fetching similar users:', error);
       }
+    },
+    async fetchPage(page: number, minAge: number | null, maxAge: number | null) {
+      await this.fetchSimilarUsers({
+        page,
+        minAge,
+        maxAge
+      });
     }
   }
 });

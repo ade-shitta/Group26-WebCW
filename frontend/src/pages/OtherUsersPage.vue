@@ -2,6 +2,18 @@
     <div class="container mt-4">
         <h2 class="heading">Users with Similar Hobbies</h2>
 
+        <!-- Age Filter -->
+        <div class="row mb-4">
+            <div class="col-md-6 mx-auto">
+                <div class="d-flex gap-3 align-items-center">
+                    <input type="number" class="form-control" v-model="minAge" placeholder="Min Age" min="0">
+                    <span>to</span>
+                    <input type="number" class="form-control" v-model="maxAge" placeholder="Max Age" min="0">
+                    <button class="btn btn-primary" @click="applyFilter">Filter</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Users List -->
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -11,17 +23,17 @@
                         <div>
                             <h5>@{{ user.username }}</h5>
                             <p class="mb-1">Common hobbies: {{ user.common_hobbies }}</p>
+                            <p class="mb-1">Age: {{ user.age }}</p>
                             <p class="mb-1">Hobbies: {{ user.hobbies.join(', ') }}</p>
                         </div>
                         <button class="btn btn-primary">Send Friend Request</button>
                     </div>
                 </div>
-                <p v-else>No users found with similar hobbies.</p>
+                <p v-else class='text-center'>No users found with similar hobbies.</p>
 
                 <!-- Pagination -->
-                <!-- only displays if more than 10 users -->
                 <nav v-if="userStore.totalPages > 1" class="mt-4">
-                    <ul class="pagination">
+                    <ul class="pagination justify-content-center">
                         <li class="page-item" :class="{ disabled: userStore.currentPage === 1 }">
                             <button class="page-link" @click="fetchPage(userStore.currentPage - 1)"
                                 :disabled="userStore.currentPage === 1">Previous</button>
@@ -46,19 +58,33 @@ import { defineComponent } from 'vue';
 import { useUserStore } from '../stores/userStore';
 
 export default defineComponent({
+    // initialise Pinia store
     setup() {
         const userStore = useUserStore();
         return { userStore };
     },
 
-    //load first page of imilar users 
-    mounted() {
-        this.fetchPage(1);
+    data() {
+        return {
+            minAge: null as number | null,
+            maxAge: null as number | null
+        }
     },
-    //fetch specific page of users with similar hobbies 
+
+    // load first page of similar users 
+    mounted() {
+        this.userStore.fetchPage(1, this.minAge, this.maxAge);
+    },
+
     methods: {
+        // apply age filter and reset to first page
+        applyFilter() {
+            this.userStore.fetchPage(1, this.minAge, this.maxAge);
+        },
+
+        // Update pagination method to use store
         fetchPage(page: number) {
-            this.userStore.fetchSimilarUsers(page);
+            this.userStore.fetchPage(page, this.minAge, this.maxAge);
         }
     }
 });
