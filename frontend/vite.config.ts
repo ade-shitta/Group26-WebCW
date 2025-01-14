@@ -2,15 +2,11 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from 'path';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-    base:
-        mode == "development"
-            ? "http://localhost:5173/"
-            : "/static/api/spa/",
+export default defineConfig({
+    base: "/static/vue/",
     build: {
+        outDir: "../api/static/vue",
         emptyOutDir: true,
-        outDir: "../api/static/api/spa",
     },
     plugins: [vue()],
     resolve: {
@@ -18,7 +14,6 @@ export default defineConfig(({ mode }) => ({
             '@': path.resolve(__dirname, './src'),
         },
     },
-<<<<<<< HEAD
     server: {
         proxy: {
             '/api': {
@@ -28,6 +23,3 @@ export default defineConfig(({ mode }) => ({
         }
     }
 });
-=======
-}));
->>>>>>> fea7924fd3e378ae6e410507d5d038ae358a8e6b
