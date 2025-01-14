@@ -6,8 +6,11 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db import models
-from django.db.models import Count
 from django.core.paginator import Paginator
+from django.db.models import Count, Q
+from django.http import JsonResponse
+from datetime import date, timedelta
+
 
 from .models import User, Profile, Hobby
 from .forms import (
@@ -114,11 +117,13 @@ def hobby_api(request):
         return JsonResponse({'status': 'success', 'hobby': hobby.to_dict()})
     return JsonResponse({'status': 'error', 'errors': form.errors})
 
+"""
+
 @login_required
 def similar_users_view(request):
-    """
+    """"""
     API view to find users with the most similar hobbies with pagination.
-    """
+    """"""
     current_user = request.user
 
     # Exclude the current user and annotate with the number of common hobbies
@@ -151,14 +156,10 @@ def similar_users_view(request):
         "similar_users": similar_users_data,
     })
 
-from datetime import date, timedelta
-from django.core.paginator import Paginator
-from django.http import JsonResponse
-
 def filtered_users_view(request):
-    """
+    """"""
     API view to filter users by age with pagination.
-    """
+    """"""
     min_age = int(request.GET.get("min_age", 0))
     max_age = int(request.GET.get("max_age", 100))
     page_number = int(request.GET.get("page", 1))
@@ -196,4 +197,53 @@ def filtered_users_view(request):
         "users_per_page": paginator.per_page,
         "filtered_users": filtered_users_data,
     })
+
+"""
+
+@login_required
+def similar_users_with_filters_view(request):
+    """
+    API view to find users with the most similar hobbies and filter by age, with pagination.
+    """
+    current_user = request.user
+    min_age = int(request.GET.get("min_age", 0))
+    max_age = int(request.GET.get("max_age", 100))
+    page_number = int(request.GET.get("page", 1))
+
+    # Calculate birthdate range for age filter
+    today = date.today()
+    min_birthdate = date(today.year - max_age - 1, today.month, today.day) + timedelta(days=1)
+    max_birthdate = date(today.year - min_age, today.month, today.day)
+
+    # Query users, excluding the current user, and annotate with the number of common hobbies
+    similar_users = (
+        User.objects.exclude(id=current_user.id)
+        .filter(date_of_birth__range=(min_birthdate, max_birthdate))  # Apply age filter
+        .annotate(common_hobbies=Count('hobbies', filter=Q(hobbies__in=current_user.hobbies.all())))
+        .order_by('-common_hobbies')  # Sort by most common hobbies first
+    )
+
+    # Paginate the results
+    paginator = Paginator(similar_users, 10)  # 10 users per page
+    page_obj = paginator.get_page(page_number)
+
+    # Convert results into a JSON-serializable format
+    similar_users_data = [
+        {
+            "username": user.username,
+            "common_hobbies": user.common_hobbies,
+            "age": user.age,
+            "hobbies": [hobby.name for hobby in user.hobbies.all()],
+        }
+        for user in page_obj.object_list
+    ]
+
+    return JsonResponse({
+        "page": page_obj.number,
+        "total_pages": paginator.num_pages,
+        "total_users": paginator.count,
+        "users_per_page": paginator.per_page,
+        "similar_users": similar_users_data,
+    })
+
 
