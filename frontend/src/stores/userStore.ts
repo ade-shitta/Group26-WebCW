@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import type { User, SimilarUser, PageData, FilterParams } from '../interfaces';
+import type { User, SimilarUser, PageData, FilterParams, Hobby } from '../interfaces';
 
 // Utility function to get CSRF token from cookies
 function getCookie(name: string): string | null {
@@ -14,6 +14,7 @@ type UserState = {
   similarUsers: SimilarUser[];
   currentPage: number;
   totalPages: number;
+  hobbies: Hobby[];
 };
 
 export const useUserStore = defineStore('user', {
@@ -21,7 +22,8 @@ export const useUserStore = defineStore('user', {
     userData: null,
     similarUsers: [],
     currentPage: 1,
-    totalPages: 1
+    totalPages: 1,
+    hobbies: []
   }),
 
   actions: {
@@ -78,7 +80,98 @@ export const useUserStore = defineStore('user', {
         return { success: false, error };
       }
     },
-    //fetch paginated list of users with similar hobbies 
+
+    // Add a new hobby
+    async addHobby(hobbyName: string) {
+      try {
+        const csrfToken = getCookie('csrftoken'); // Get the CSRF token from cookies
+
+        if (!csrfToken) {
+          console.error('CSRF token not found.');
+          return { success: false, error: 'CSRF token not found' };
+        }
+
+        const response = await fetch('/api/hobbies/', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          body: JSON.stringify({ name: hobbyName }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to add hobby');
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          await this.fetchHobbies(); // Fetch the updated list of hobbies
+          return { success: true, hobby: data.hobby };
+        } else {
+          return { success: false, error: data.errors };
+        }
+      } catch (error) {
+        console.error('Error adding hobby:', error);
+        return { success: false, error };
+      }
+    },
+
+    // Add an existing hobby to the user's profile
+    async addExistingHobbyToProfile(hobbyId: number) {
+      try {
+        const csrfToken = getCookie('csrftoken'); // Get the CSRF token from cookies
+
+        if (!csrfToken) {
+          console.error('CSRF token not found.');
+          return { success: false, error: 'CSRF token not found' };
+        }
+
+        const response = await fetch('/api/profile/add_hobby', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken,
+          },
+          body: JSON.stringify({ hobby_id: hobbyId }),
+      });
+
+        if (!response.ok) {
+          throw new Error('Failed to add hobby to profile');
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          await this.fetchUserProfile(); // Fetch the updated user profile
+          return { success: true };
+        } else {
+          return { success: false, error: data.errors };
+        }
+      } catch (error) {
+        console.error('Error adding hobby to profile:', error);
+        return { success: false, error };
+      }
+    },
+
+    // Fetch the list of hobbies
+    async fetchHobbies() {
+      try {
+        const response = await fetch('/api/hobbies/', {
+          credentials: 'include'
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch hobbies');
+        }
+        const data = await response.json();
+        this.hobbies = data.hobbies;
+      } catch (error) {
+        console.error('Error fetching hobbies:', error);
+      }
+    },
+
+    // Fetch paginated list of users with similar hobbies
     async fetchSimilarUsers(params: FilterParams) {
       try {
         const queryParams = new URLSearchParams();
@@ -101,6 +194,7 @@ export const useUserStore = defineStore('user', {
         console.error('Error fetching similar users:', error);
       }
     },
+
     async fetchPage(page: number, minAge: number | null, maxAge: number | null) {
       await this.fetchSimilarUsers({
         page,

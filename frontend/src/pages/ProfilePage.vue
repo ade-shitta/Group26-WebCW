@@ -24,7 +24,10 @@
           </div>
         </div>
         <div class="hobbies">
-          <h6>My Hobbies?</h6>
+          <h6>My Hobbies</h6>
+          <ul>
+            <li v-for="hobby in userStore.userData.hobbies" :key="hobby.id">{{ hobby.name }}</li>
+          </ul>
         </div>
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"
@@ -65,18 +68,21 @@
                 <input type="date" class="form-control" v-model="editForm.date_of_birth">
               </div>
               <div class="mb-3">
-                <label>Hobbies</label>
-                <select multiple class="form-control" v-model="editForm.hobbies">
-                  <option v-for="hobby in hobbies" :key="hobby.id" :value="hobby.id">
-                    {{ hobby.name }}
-                  </option>
-                </select>
+                <label>Select Existing Hobby</label>
+                <div class="input-group">
+                  <select class="form-control" v-model="selectedHobby">
+                    <option v-for="hobby in userStore.hobbies" :key="hobby.id" :value="hobby.id">
+                      {{ hobby.name }}
+                    </option>
+                  </select>
+                  <button class="btn btn-outline-secondary" type="button" @click="addExistingHobby">Add</button>
+                </div>
               </div>
               <div class="mb-3">
                 <label>Add New Hobby</label>
                 <div class="input-group">
                   <input type="text" class="form-control" v-model="newHobby">
-                  <button class="btn btn-outline-secondary" type="button" @click="addHobby">Add</button>
+                  <button class="btn btn-outline-secondary" type="button" @click="addNewHobby">Add</button>
                 </div>
               </div>
             </div>
@@ -93,12 +99,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { User, Hobby } from '../interfaces';
+import type { User, Hobby } from '../interfaces'; // Import Hobby type
 import { useUserStore } from '../stores/userStore';
 
 export default defineComponent({
   mounted() {
     this.userStore.fetchUserProfile();
+    this.userStore.fetchHobbies(); // Fetch hobbies when the component is mounted
   },
   setup() {
     const userStore = useUserStore();
@@ -114,10 +121,10 @@ export default defineComponent({
         date_of_birth: "",
         first_name: "",
         last_name: "",
-        hobbies: []
+        hobbies: [] as Hobby[] // Use Hobby type
       } as User, //match the User interface 
       newHobby: "",
-      hobbies: [] as Hobby[] //match Hobby interface 
+      selectedHobby: null
     };
   },
   methods: {
@@ -152,9 +159,42 @@ export default defineComponent({
       }
       return errors;
     },
-    //add new hobby
-    addHobby() {
-      // Add new hobby logic here
+    async addNewHobby() {
+      if (!this.newHobby.trim()) {
+        alert('Hobby name cannot be empty');
+        return;
+      }
+
+      const result = await this.userStore.addHobby(this.newHobby);
+      if (result.success) {
+        await this.userStore.fetchHobbies(); // Fetch the updated list of hobbies
+        this.editForm.hobbies.push(result.hobby); // Add the new hobby to the user's list of hobbies
+        if (this.userStore.userData) {
+          this.userStore.userData.hobbies.push(result.hobby); // Add the new hobby to the user's list of hobbies in userData
+        }
+        this.newHobby = '';
+      } else {
+        alert('Error adding hobby: ' + JSON.stringify(result.error));
+      }
+    },
+    async addExistingHobby() {
+      if (!this.selectedHobby) {
+        alert('Please select a hobby');
+        return;
+      }
+
+      const result = await this.userStore.addExistingHobbyToProfile(this.selectedHobby);
+      if (result.success) {
+        const hobby = this.userStore.hobbies.find(hobby => hobby.id === this.selectedHobby);
+        if (hobby && !this.editForm.hobbies.some(h => h.id === hobby.id)) {
+          this.editForm.hobbies.push(hobby);
+          if (this.userStore.userData) {
+            this.userStore.userData.hobbies.push(hobby); // Add the existing hobby to the user's list of hobbies in userData
+          }
+        }
+      } else {
+        alert('Error adding hobby: ' + JSON.stringify(result.error));
+      }
     },
     async saveChanges() {
       const errors = this.validateForm();

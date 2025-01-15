@@ -113,15 +113,19 @@ def hobby_api(request):
         return JsonResponse({
             'hobbies': [hobby.to_dict() for hobby in hobbies]
         })
-    
+
     # Handle POST request to create new hobby
-    form = HobbyForm(request.POST)
+    data = json.loads(request.body)
+    form = HobbyForm(data)
     if form.is_valid():
         hobby = form.save(commit=False)
         hobby.created_by = request.user
         hobby.save()
+        # Link the created hobby to the user
+        request.user.hobbies.add(hobby)
         return JsonResponse({'status': 'success', 'hobby': hobby.to_dict()})
     return JsonResponse({'status': 'error', 'errors': form.errors})
+
 
 """
 
@@ -316,3 +320,20 @@ def reject_request(request):
 
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
+@login_required
+@require_http_methods(['POST'])
+def add_hobby_to_profile(request):
+    """API endpoint to add an existing hobby to the user's profile"""
+    data = json.loads(request.body)
+    hobby_id = data.get('hobby_id')
+    if not hobby_id:
+        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['This field is required.']}})
+
+    try:
+        hobby = Hobby.objects.get(id=hobby_id)
+    except Hobby.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['Hobby not found.']}})
+
+    request.user.hobbies.add(hobby)
+    return JsonResponse({'status': 'success'})
