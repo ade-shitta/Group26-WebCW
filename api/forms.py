@@ -94,6 +94,8 @@ class UserUpdateForm(forms.ModelForm):
         user = super().save(commit=False)
         if commit:
             user.save()
+            if 'hobbies' in self.cleaned_data:
+                user.hobbies.set(self.cleaned_data['hobbies'])
             Profile.objects.get_or_create(user=user)
         return user
 

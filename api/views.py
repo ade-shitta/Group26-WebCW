@@ -89,7 +89,10 @@ def profile_api(request):
         if form.is_valid():
             form.save()
             return JsonResponse({'status': 'success'}, status=200)
-        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+        else:
+            # Log form errors for debugging
+            print(form.errors)
+            return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
 
@@ -125,6 +128,40 @@ def hobby_api(request):
         request.user.hobbies.add(hobby)
         return JsonResponse({'status': 'success', 'hobby': hobby.to_dict()})
     return JsonResponse({'status': 'error', 'errors': form.errors})
+
+@login_required
+@require_http_methods(['POST'])
+def add_hobby_to_profile(request):
+    """API endpoint to add an existing hobby to the user's profile"""
+    data = json.loads(request.body)
+    hobby_id = data.get('hobby_id')
+    if not hobby_id:
+        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['This field is required.']}})
+
+    try:
+        hobby = Hobby.objects.get(id=hobby_id)
+    except Hobby.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['Hobby not found.']}})
+
+    request.user.hobbies.add(hobby)
+    return JsonResponse({'status': 'success'})
+
+@login_required
+@require_http_methods(['POST'])
+def delete_hobby_from_profile(request):
+    """API endpoint to delete a hobby from the user's profile"""
+    data = json.loads(request.body)
+    hobby_id = data.get('hobby_id')
+    if not hobby_id:
+        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['This field is required.']}})
+
+    try:
+        hobby = Hobby.objects.get(id=hobby_id)
+    except Hobby.DoesNotExist:
+        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['Hobby not found.']}})
+
+    request.user.hobbies.remove(hobby)
+    return JsonResponse({'status': 'success'})
 
 
 """
@@ -320,20 +357,3 @@ def reject_request(request):
 
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
-
-@login_required
-@require_http_methods(['POST'])
-def add_hobby_to_profile(request):
-    """API endpoint to add an existing hobby to the user's profile"""
-    data = json.loads(request.body)
-    hobby_id = data.get('hobby_id')
-    if not hobby_id:
-        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['This field is required.']}})
-
-    try:
-        hobby = Hobby.objects.get(id=hobby_id)
-    except Hobby.DoesNotExist:
-        return JsonResponse({'status': 'error', 'errors': {'hobby_id': ['Hobby not found.']}})
-
-    request.user.hobbies.add(hobby)
-    return JsonResponse({'status': 'success'})

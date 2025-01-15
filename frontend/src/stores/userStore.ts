@@ -51,28 +51,36 @@ export const useUserStore = defineStore('user', {
     // Update the user profile
     async updateProfile(updatedData: Partial<User>) {
       try {
-        const csrfToken = getCookie('csrftoken'); // Get the CSRF token from cookies
+        const csrfToken = getCookie('csrftoken');
 
         if (!csrfToken) {
           console.error('CSRF token not found.');
           return { success: false, error: 'CSRF token not found' };
         }
 
+        // Ensure hobbies is sent as an array of IDs
+        const formattedData = {
+          ...updatedData,
+          hobbies: updatedData.hobbies?.map(hobby => 
+            typeof hobby === 'number' ? hobby : hobby.id
+          )
+        };
+
         const response = await fetch('http://localhost:8000/api/profile/', {
           method: 'PUT',
-          credentials: 'include', // Ensure cookies are included
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken, // Include CSRF token in headers
+            'X-CSRFToken': csrfToken,
           },
-          body: JSON.stringify(updatedData), // Send updated user data
+          body: JSON.stringify(formattedData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update profile');
+          const errorData = await response.json();
+          throw new Error(errorData.errors || 'Failed to update profile');
         }
 
-        // If successful, refresh user data
         await this.fetchUserProfile();
         return { success: true };
       } catch (error) {
@@ -151,6 +159,43 @@ export const useUserStore = defineStore('user', {
         }
       } catch (error) {
         console.error('Error adding hobby to profile:', error);
+        return { success: false, error };
+      }
+    },
+
+    // Delete a hobby from the user's profile
+    async deleteHobbyFromProfile(hobbyId: number) {
+      try {
+        const csrfToken = getCookie('csrftoken'); // Get the CSRF token from cookies
+
+        if (!csrfToken) {
+          console.error('CSRF token not found.');
+          return { success: false, error: 'CSRF token not found' };
+        }
+
+        const response = await fetch('/api/profile/delete_hobby', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          body: JSON.stringify({ hobby_id: hobbyId }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete hobby from profile');
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          await this.fetchUserProfile(); // Fetch the updated user profile
+          return { success: true };
+        } else {
+          return { success: false, error: data.errors };
+        }
+      } catch (error) {
+        console.error('Error deleting hobby from profile:', error);
         return { success: false, error };
       }
     },
