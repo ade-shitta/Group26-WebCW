@@ -277,41 +277,43 @@ export default defineComponent({
       }
     },
     async changePassword() {
-      if (this.newPassword !== this.confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
+  if (this.newPassword !== this.confirmPassword) {
+    alert('Passwords do not match');
+    return;
+  }
 
-      try {
-        const csrfToken = getCookie('csrftoken');
+  try {
+    const csrfToken = getCookie('csrftoken');
 
-        const response = await fetch('http://localhost:8000/api/profile/', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken || '',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            password: this.newPassword
-          })
-        });
+    const response = await fetch('http://localhost:8000/api/profile/', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken || '',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        password: this.newPassword
+      })
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data.status === 'success') {
-          // clear form
-          this.newPassword = '';
-          this.confirmPassword = '';
-          alert('Password changed successfully');
-        } else {
-          alert('Failed to change password');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to change password');
-      }
+    if (data.status === 'success') {
+      // clear form
+      this.newPassword = '';
+      this.confirmPassword = '';
+      alert('Password changed successfully');
+      // You might want to handle automatic re-login or session refresh here
+      // Optionally, you can trigger a re-login by calling an API to fetch the updated user data
+    } else {
+      alert('Failed to change password');
     }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to change password');
+  }
+}
   }
 });
 </script>

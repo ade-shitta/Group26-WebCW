@@ -10,6 +10,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from datetime import date, timedelta
+from django.contrib.auth import update_session_auth_hash
 
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -79,18 +80,23 @@ def profile_api(request):
     """API endpoint for profile operations"""
     if request.method == 'GET':
         return JsonResponse(request.user.to_dict())
-        
+
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)
 
-            #handle password change
+            # Handle password change
             new_password = data.get('password')
             if new_password:
+                # Set the new password and save the user
                 request.user.set_password(new_password)
                 request.user.save()
+
+                # Reauthenticate the user by updating the session
+                update_session_auth_hash(request, request.user)
+                
                 return JsonResponse({'status': 'success'})
-            
+
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
 
@@ -104,6 +110,7 @@ def profile_api(request):
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
     return JsonResponse({'status': 'error', 'message': 'Method not allowed'}, status=405)
+
 
 @login_required
 def password_change(request):
