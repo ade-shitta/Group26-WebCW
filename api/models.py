@@ -145,4 +145,51 @@ class Friends(models.Model):
     '''
     Through model for managing friend relationships between users
     '''
-    pass
+    SENT = 'sent'    
+    ACCEPTED = 'accepted'
+    REJECTED = 'rejected'
+
+    STATUS_CHOICES = [
+        (SENT, 'Sent'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+    ]
+
+    from_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='sent_requests',  
+        null=True 
+    )
+
+    to_user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='received_requests',  
+        null=True
+    )
+
+    timestamp = models.DateTimeField(auto_now_add=True, null=False)  
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=SENT  
+    )
+
+    class Meta:  
+        verbose_name_plural = "Friends Requests"
+
+    def __str__(self):
+        return f"Friend request from {self.from_user.username} to {self.to_user.username} ({self.status})"
+    
+    def to_dict(self, current_user=None) -> Dict[str, Any]:
+        friend_user = self.from_user if self.to_user == current_user else self.to_user
+        return {
+            'id': self.id,
+            'friend_username': friend_user.username,  # This will show the friend's username
+            'from_user': self.from_user.username,
+            'to_user': self.to_user.username,
+            'timestamp': self.timestamp.strftime("%Y-%m-%d %H:%M"),
+            'status': self.status,
+        }

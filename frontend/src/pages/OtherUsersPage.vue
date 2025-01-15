@@ -26,7 +26,7 @@
                             <p class="mb-1">Age: {{ user.age }}</p>
                             <p class="mb-1">Hobbies: {{ user.hobbies.join(', ') }}</p>
                         </div>
-                        <button class="btn btn-primary">Send Friend Request</button>
+                        <button class="btn btn-primary" @click="sendFriendRequest(user.username)">Send Friend Request</button>
                     </div>
                 </div>
                 <p v-else class='text-center'>No users found with similar hobbies.</p>
@@ -80,6 +80,16 @@ export default defineComponent({
         // apply age filter and reset to first page
         applyFilter() {
             this.userStore.fetchPage(1, this.minAge, this.maxAge);
+        },
+
+        async sendFriendRequest(username: string) {
+            console.log('Sending request for username:', username);
+            const result = await this.userStore.sendFriendRequest(username);
+            if (result.success) {
+                alert('Friend request sent!');
+            } else {
+                alert('Failed to send friend request!');
+            }
         },
 
         // Update pagination method to use store
