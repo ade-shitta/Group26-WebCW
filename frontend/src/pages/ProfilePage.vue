@@ -23,15 +23,25 @@
             <div class="dob-text text-muted">{{ userStore.userData?.date_of_birth }}</div>
           </div>
         </div>
+        <h6 class="hobbies-title">My Hobbies</h6>
         <div class="hobbies">
-          <h6>My Hobbies</h6>
-          <ul>
-            <li v-for="hobby in userStore.userData.hobbies" :key="typeof hobby === 'number' ? hobby : hobby.id">
-              {{ typeof hobby === 'number' ? hobby : hobby.name }}
-              <button class="btn btn-danger btn-sm"
-                @click="deleteHobby(typeof hobby === 'number' ? hobby : hobby.id)">Delete</button>
-            </li>
-          </ul>
+          <div class="table-responsive p-3">
+            <table class="table">
+              <tbody>
+                <tr v-for="hobby in userStore.userData.hobbies" :key="typeof hobby === 'number' ? hobby : hobby.id">
+                  <td class="align-middle">
+                    {{ typeof hobby === 'number' ? hobby : hobby.name }}
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-danger btn-sm"
+                      @click="deleteHobby(typeof hobby === 'number' ? hobby : hobby.id)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <!-- Button trigger modal -->
         <div class="button-container">
@@ -136,9 +146,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { User, Hobby } from '../interfaces'; // Import Hobby type
+import type { User, Hobby } from '../interfaces'; 
 import { useUserStore } from '../stores/userStore';
-import {getCookie} from '../stores/userStore';
+import { getCookie } from '../stores/userStore';
 
 export default defineComponent({
   mounted() {
@@ -329,7 +339,7 @@ export default defineComponent({
   align-self: center;
 }
 
-.btn-primary {
+.btn-primary, .btn-secondary{
   display: flex;
   flex-direction: columns;
   text-decoration: none;
@@ -340,6 +350,13 @@ export default defineComponent({
   border-radius: 8px;
   align-self: center;
   border: none;
+}
+
+.button-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem;
 }
 
 .card-link:hover {
@@ -360,14 +377,16 @@ export default defineComponent({
   gap: 0.5rem;
 }
 
-.hobbies h6 {
+.hobbies-title {
   font-weight: normal;
-  justify-self: center;
+  align-self: center;
+  margin-top: 2rem;
+  margin-bottom: 0rem;
+  font-weight: 500;
 }
 
 .hobbies {
   align-self: center;
-  align-content: center;
   border: 1px solid grey;
   border-radius: 1rem;
   width: 100%;
