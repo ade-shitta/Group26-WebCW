@@ -83,6 +83,14 @@ def profile_api(request):
     if request.method == 'PUT':
         try:
             data = json.loads(request.body)
+
+            #handle password change
+            new_password = data.get('password')
+            if new_password:
+                request.user.set_password(new_password)
+                request.user.save()
+                return JsonResponse({'status': 'success'})
+            
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
 
