@@ -1,3 +1,5 @@
+Admin account: Username: user | Password: test
+
 Created user: Heidi Hernandez | Username: heidihernandez | Email: heidihernandez@example.com | Password: n^2hb1vlFQ
 Created user: Laura Jones | Username: laurajones | Email: laurajones@example.com | Password: w@mj6NlsGp
 Created user: Gary Rasmussen | Username: garyrasmussen | Email: garyrasmussen@example.com | Password: HUn3gHeCF!
