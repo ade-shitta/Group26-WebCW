@@ -51,28 +51,37 @@ export const useUserStore = defineStore('user', {
     // Update the user profile
     async updateProfile(updatedData: Partial<User>) {
       try {
-        const csrfToken = getCookie('csrftoken'); // Get the CSRF token from cookies
+        const csrfToken = getCookie('csrftoken');
 
         if (!csrfToken) {
           console.error('CSRF token not found.');
           return { success: false, error: 'CSRF token not found' };
         }
 
+        // Ensure hobbies is sent as an array of IDs
+        const formattedData = {
+          ...updatedData,
+          hobbies: updatedData.hobbies?.map(hobby => 
+            typeof hobby === 'number' ? hobby : hobby.id
+          )
+        };
+
         const response = await fetch('http://localhost:8000/api/profile/', {
           method: 'PUT',
-          credentials: 'include', // Ensure cookies are included
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken, // Include CSRF token in headers
+            'X-CSRFToken': csrfToken,
           },
-          body: JSON.stringify(updatedData), // Send updated user data
+          body: JSON.stringify(formattedData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update profile');
+          const errorData = await response.json();
+          throw new Error(errorData.errors || 'Failed to update profile');
         }
 
-        await this.fetchUserProfile(); // Refresh user profile after success
+        await this.fetchUserProfile();
         return { success: true };
       } catch (error) {
         console.error('Error updating profile:', error);
