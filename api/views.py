@@ -358,3 +358,49 @@ def reject_request(request):
 
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
+import random
+from api.models import User, Hobby
+from faker import Faker
+
+# Initialize Faker instance
+fake = Faker()
+
+# Create hobbies if they don't already exist
+hobby1, created1 = Hobby.objects.get_or_create(name="Reading")
+hobby2, created2 = Hobby.objects.get_or_create(name="Gaming")
+hobby3, created3 = Hobby.objects.get_or_create(name="Swimming")
+
+# Create 20 random users with similar email and username structure
+for _ in range(20):
+    # Generate random user data
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    email = f"{first_name.lower()}{last_name.lower()}@example.com"
+    username = f"{first_name.lower()}{last_name.lower()}"
+    password = fake.password()
+
+    # Create the user
+    user = User.objects.create(
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        username=username,
+        date_of_birth=fake.date_of_birth(),
+    )
+
+    # Set password securely
+    user.set_password(password)
+    user.save()
+
+    # Add hobbies to user (randomly assigning one or more hobbies)
+    user.hobbies.add(random.choice([hobby1, hobby2, hobby3]))
+
+    # Print a message to confirm user creation, including username
+    print(f"Created user: {first_name} {last_name} | Username: {username} | Email: {email} | Password: {password}")
+
+print("20 random users created successfully.")
+
+
+
+
