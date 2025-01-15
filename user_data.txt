@@ -1,0 +1,22 @@
+Admin account: Username: user | Password: test
+
+Created user: Heidi Hernandez | Username: heidihernandez | Email: heidihernandez@example.com | Password: n^2hb1vlFQ
+Created user: Laura Jones | Username: laurajones | Email: laurajones@example.com | Password: w@mj6NlsGp
+Created user: Gary Rasmussen | Username: garyrasmussen | Email: garyrasmussen@example.com | Password: HUn3gHeCF!
+Created user: Wanda Johnson | Username: wandajohnson | Email: wandajohnson@example.com | Password: lHLf0UCb!5
+Created user: Erica Cross | Username: ericacross | Email: ericacross@example.com | Password: w5BozFTh+$
+Created user: George Ramsey | Username: georgeramsey | Email: georgeramsey@example.com | Password: $3Tb6j0EWi
+Created user: Ana Martin | Username: anamartin | Email: anamartin@example.com | Password: *4nC!kpgM_
+Created user: Tamara Taylor | Username: tamarataylor | Email: tamarataylor@example.com | Password: #0&TUIzzhn
+Created user: Jeffery Sullivan | Username: jefferysullivan | Email: jefferysullivan@example.com | Password: yDTUIMel(5
+Created user: Dawn Moore | Username: dawnmoore | Email: dawnmoore@example.com | Password: o8@SDq8E!C
+Created user: Sandra Boyer | Username: sandraboyer | Email: sandraboyer@example.com | Password: Z%07P6Gd^n
+Created user: Amanda Kim | Username: amandakim | Email: amandakim@example.com | Password: ++%6EmiIsS
+Created user: Jason Smith | Username: jasonsmith | Email: jasonsmith@example.com | Password: UR9UN!j0+N
+Created user: Lucas Mcintyre | Username: lucasmcintyre | Email: lucasmcintyre@example.com | Password: )dGD+M$h_7
+Created user: Pamela Riley | Username: pamelariley | Email: pamelariley@example.com | Password: !cOtGdLV4V
+Created user: Tina Brown | Username: tinabrown | Email: tinabrown@example.com | Password: )Wv%hGykI3
+Created user: Patrick Allen | Username: patrickallen | Email: patrickallen@example.com | Password: !y8aIu!hE!
+Created user: Daniel Herrera | Username: danielherrera | Email: danielherrera@example.com | Password: x!o%Ve^B+7
+Created user: Joel Jackson | Username: joeljackson | Email: joeljackson@example.com | Password: t#6EjEcE+v
+Created user: Jose Williams | Username: josewilliams | Email: josewilliams@example.com | Password: c6vF#beP#K

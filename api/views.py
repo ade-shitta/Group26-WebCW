@@ -164,90 +164,6 @@ def delete_hobby_from_profile(request):
     request.user.hobbies.remove(hobby)
     return JsonResponse({'status': 'success'})
 
-
-"""
-
-@login_required
-def similar_users_view(request):
-    """"""
-    API view to find users with the most similar hobbies with pagination.
-    """"""
-    current_user = request.user
-
-    # Exclude the current user and annotate with the number of common hobbies
-    similar_users = (
-        User.objects.exclude(id=current_user.id)
-        .annotate(common_hobbies=Count('hobbies', filter=models.Q(hobbies__in=current_user.hobbies.all())))
-        .order_by('-common_hobbies')
-    )
-
-    # Paginate the results
-    paginator = Paginator(similar_users, 10)
-    page_number = request.GET.get('page', 1)  
-    page_obj = paginator.get_page(page_number)
-
-    # Convert the results into a dictionary for JSON response
-    similar_users_data = [
-        {
-            "username": user.username,
-            "common_hobbies": user.common_hobbies,
-            "hobbies": [hobby.name for hobby in user.hobbies.all()]
-        }
-        for user in page_obj.object_list
-    ]
-
-    return JsonResponse({
-        "page": page_obj.number,
-        "total_pages": paginator.num_pages,
-        "total_users": paginator.count,
-        "users_per_page": paginator.per_page,
-        "similar_users": similar_users_data,
-    })
-
-def filtered_users_view(request):
-    """"""
-    API view to filter users by age with pagination.
-    """"""
-    min_age = int(request.GET.get("min_age", 0))
-    max_age = int(request.GET.get("max_age", 100))
-    page_number = int(request.GET.get("page", 1))
-
-    # Calculate date range based on age
-    today = date.today()
-    min_birthdate = date(today.year - max_age - 1, today.month, today.day) + timedelta(days=1)
-    max_birthdate = date(today.year - min_age, today.month, today.day)
-
-    # Filter users by date_of_birth
-    filtered_users = User.objects.filter(
-        date_of_birth__range=(min_birthdate, max_birthdate)
-    ).order_by('username') 
-
-    # Paginate results
-    paginator = Paginator(filtered_users, 10) 
-    page_obj = paginator.get_page(page_number)
-
-    # Prepare JSON  data
-    filtered_users_data = [
-        {
-            "username": user.username,
-            "email": user.email,
-            "date_of_birth": user.date_of_birth.strftime("%Y-%m-%d"),
-            "age": user.age,
-            "hobbies": [hobby.name for hobby in user.hobbies.all()],
-        }
-        for user in page_obj.object_list
-    ]
-
-    return JsonResponse({
-        "page": page_obj.number,
-        "total_pages": paginator.num_pages,
-        "total_users": paginator.count,
-        "users_per_page": paginator.per_page,
-        "filtered_users": filtered_users_data,
-    })
-
-"""
-
 @login_required
 def similar_users_with_filters_view(request):
     """
@@ -358,3 +274,7 @@ def reject_request(request):
 
 def get_csrf_token(request):
     return JsonResponse({'csrfToken': get_token(request)})
+
+
+
+
