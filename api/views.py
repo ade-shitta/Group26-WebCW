@@ -15,7 +15,7 @@ from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie
 import json
 
-from .models import User, Profile, Hobby
+from .models import User, Profile, Hobby, Friends
 from .forms import (
     LoginForm, SignUpForm, UserUpdateForm, 
     HobbyForm, PasswordChangeCustomForm
@@ -251,6 +251,67 @@ def similar_users_with_filters_view(request):
         "users_per_page": paginator.per_page,
         "similar_users": similar_users_data,
     })
+
+@login_required
+def friends_view(request):
+    if request.method == 'GET':
+        friends = Friends.objects.filter(
+            (models.Q(from_user=request.user) | models.Q(to_user=request.user)) &
+            models.Q(status='accepted')
+        )
+        friends_data = [friend.to_dict(current_user=request.user) for friend in friends]
+        print(friends_data)
+        return JsonResponse({'status': 'success', 'friends': friends_data})
+
+@login_required
+def get_friend_requests(request):
+    if request.method == 'GET':
+        friend_requests = Friends.objects.filter(to_user=request.user, status='sent')
+        requests_data = [fr.to_dict() for fr in friend_requests]
+        print(requests_data)
+        return JsonResponse({'status': 'success', 'friend_requests': requests_data})
+
+
+@login_required
+@require_http_methods(['POST'])
+def send_request(request):
+    """Send a friend request to another user."""
+    data = json.loads(request.body)
+    username = data.get('username')
+
+    recipient = User.objects.filter(username=username).first()
+    if not recipient:
+        return JsonResponse({"status": "error", "message": "User not found"}, status=404)
+
+    # Create a friend request
+    Friends.objects.create(from_user=request.user, to_user=recipient, status='sent')
+    return JsonResponse({"status": "success", "message": f"Friend request sent to {username}"})
+
+@login_required
+@require_http_methods(['POST'])
+def accept_request(request):
+    """Accept a friend request."""
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        friend_request = get_object_or_404(Friends, id=request_id, to_user=request.user, status='sent')
+        friend_request.status = 'accepted'
+        friend_request.save()
+        return JsonResponse({'status': 'success', 'message': 'Friend request accepted'})
+
+@login_required
+def reject_request(request):
+    """Reject a friend request."""
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        request_id = data.get('request_id')
+        friend_request = get_object_or_404(Friends, id=request_id, to_user=request.user, status='sent')
+
+        friend_request.status = 'rejected'
+        friend_request.save()
+        return JsonResponse({'status': 'success', 'message': 'Friend request rejected'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
 def get_csrf_token(request):

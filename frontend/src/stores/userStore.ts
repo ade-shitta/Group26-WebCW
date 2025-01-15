@@ -107,6 +107,35 @@ export const useUserStore = defineStore('user', {
         minAge,
         maxAge
       });
-    }
-  }
+    },
+    async sendFriendRequest(username: string) {
+      try {
+        const csrfToken = getCookie('csrftoken'); // Get the CSRF token
+
+        if (!csrfToken) {
+          console.error('CSRF token not found.');
+          return { success: false, error: 'CSRF token not found' };
+        }
+
+        const response = await fetch('http://localhost:8000/api/send_request/', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken, // Include CSRF token in headers
+          },
+          body: JSON.stringify({ username }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to send friend request');
+        }
+
+        return { success: true };
+      } catch (error) {
+        console.error('Error sending friend request:', error);
+        return { success: false, error };
+      }
+    },
+  },
 });
