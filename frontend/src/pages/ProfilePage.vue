@@ -23,20 +23,36 @@
             <div class="dob-text text-muted">{{ userStore.userData?.date_of_birth }}</div>
           </div>
         </div>
+        <h6 class="hobbies-title">My Hobbies</h6>
         <div class="hobbies">
-          <h6>My Hobbies</h6>
-          <ul>
-            <li v-for="hobby in userStore.userData.hobbies" :key="typeof hobby === 'number' ? hobby : hobby.id">
-              {{ typeof hobby === 'number' ? hobby : hobby.name }}
-              <button class="btn btn-danger btn-sm" @click="deleteHobby(typeof hobby === 'number' ? hobby : hobby.id)">Delete</button>
-            </li>
-          </ul>
+          <div class="table-responsive p-3">
+            <table class="table">
+              <tbody>
+                <tr v-for="hobby in userStore.userData.hobbies" :key="typeof hobby === 'number' ? hobby : hobby.id">
+                  <td class="align-middle">
+                    {{ typeof hobby === 'number' ? hobby : hobby.name }}
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-danger btn-sm"
+                      @click="deleteHobby(typeof hobby === 'number' ? hobby : hobby.id)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"
-          @click="populateEditForm">
-          Edit Profile
-        </button>
+        <div class="button-container">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"
+            @click="populateEditForm">
+            Edit Profile
+          </button>
+          <button type="button" class="btn btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#passwordModal">
+            Change Password
+          </button>
+        </div>
       </div>
     </div>
 
@@ -92,7 +108,35 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="saveChanges" data-bs-dismiss="modal">Save changes</button>
+            <button type="button" class="btn btn-primary" @click="saveChanges" data-bs-dismiss="modal">Save
+              changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="passwordModalLabel">Change Password</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label>New Password</label>
+              <input type="password" class="form-control" v-model="newPassword">
+            </div>
+            <div class="mb-3">
+              <label>Confirm New Password</label>
+              <input type="password" class="form-control" v-model="confirmPassword">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="changePassword" data-bs-dismiss="modal">Save
+              Password</button>
           </div>
         </div>
       </div>
@@ -102,8 +146,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { User, Hobby } from '../interfaces'; // Import Hobby type
+import type { User, Hobby } from '../interfaces'; 
 import { useUserStore } from '../stores/userStore';
+import { getCookie } from '../stores/userStore';
 
 export default defineComponent({
   mounted() {
@@ -127,7 +172,9 @@ export default defineComponent({
         hobbies: [] as Hobby[] // Ensure hobbies field is an array of Hobby objects
       } as User,
       newHobby: "",
-      selectedHobby: null
+      selectedHobby: null,
+      newPassword: '',
+      confirmPassword: '',
     };
   },
   methods: {
@@ -228,7 +275,45 @@ export default defineComponent({
       } catch (error) {
         console.error('Error:', error);
       }
+    },
+    async changePassword() {
+  if (this.newPassword !== this.confirmPassword) {
+    alert('Passwords do not match');
+    return;
+  }
+
+  try {
+    const csrfToken = getCookie('csrftoken');
+
+    const response = await fetch('http://localhost:8000/api/profile/', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken || '',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        password: this.newPassword
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.status === 'success') {
+      // clear form
+      this.newPassword = '';
+      this.confirmPassword = '';
+      alert('Password changed successfully');
+      // You might want to handle automatic re-login or session refresh here
+      // Optionally, you can trigger a re-login by calling an API to fetch the updated user data
+    } else {
+      alert('Failed to change password');
     }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to change password');
+  }
+}
   }
 });
 </script>
@@ -256,7 +341,7 @@ export default defineComponent({
   align-self: center;
 }
 
-.btn-primary {
+.btn-primary, .btn-secondary{
   display: flex;
   flex-direction: columns;
   text-decoration: none;
@@ -267,6 +352,13 @@ export default defineComponent({
   border-radius: 8px;
   align-self: center;
   border: none;
+}
+
+.button-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1rem;
 }
 
 .card-link:hover {
@@ -287,14 +379,16 @@ export default defineComponent({
   gap: 0.5rem;
 }
 
-.hobbies h6 {
+.hobbies-title {
   font-weight: normal;
-  justify-self: center;
+  align-self: center;
+  margin-top: 2rem;
+  margin-bottom: 0rem;
+  font-weight: 500;
 }
 
 .hobbies {
   align-self: center;
-  align-content: center;
   border: 1px solid grey;
   border-radius: 1rem;
   width: 100%;
