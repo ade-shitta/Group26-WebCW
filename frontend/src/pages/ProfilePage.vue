@@ -26,9 +26,9 @@
         <div class="hobbies">
           <h6>My Hobbies</h6>
           <ul>
-            <li v-for="hobby in userStore.userData.hobbies" :key="hobby.id">
-              {{ hobby.name }}
-              <button class="btn btn-danger btn-sm" @click="deleteHobby(hobby.id)">Delete</button>
+            <li v-for="hobby in userStore.userData.hobbies" :key="typeof hobby === 'number' ? hobby : hobby.id">
+              {{ typeof hobby === 'number' ? hobby : hobby.name }}
+              <button class="btn btn-danger btn-sm" @click="deleteHobby(typeof hobby === 'number' ? hobby : hobby.id)">Delete</button>
             </li>
           </ul>
         </div>
@@ -124,7 +124,7 @@ export default defineComponent({
         date_of_birth: "",
         first_name: "",
         last_name: "",
-        hobbies: [] as Hobby[] // Ensure hobbies field is included
+        hobbies: [] as Hobby[] // Ensure hobbies field is an array of Hobby objects
       } as User,
       newHobby: "",
       selectedHobby: null
@@ -216,18 +216,13 @@ export default defineComponent({
         alert(errors.join('\n'));
         return;
       }
-
-      // Ensure hobbies field is a list of hobby IDs
-      const hobbyIds = this.editForm.hobbies.map(hobby => hobby.id);
-      const updatedForm = { ...this.editForm, hobbies: hobbyIds };
-
       try {
-        const result = await this.userStore.updateProfile(updatedForm);
+        // Pass the array of Hobby objects directly
+        const result = await this.userStore.updateProfile(this.editForm);
         if (result.success) {
-          console.log('Form is valid, preparing to send request. Data:', updatedForm);
+          console.log('Form is valid, preparing to send request. Data:', this.editForm);
           this.showModal = false;
         } else {
-          // handle error
           console.error('Failed to update profile');
         }
       } catch (error) {

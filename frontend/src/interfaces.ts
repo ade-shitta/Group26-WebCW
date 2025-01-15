@@ -1,10 +1,10 @@
 export interface User {
-    username: string;
-    email: string; 
-    date_of_birth: string | null; 
-    first_name: string; 
-    last_name: string; 
-    hobbies: Hobby[];
+  username: string;
+  email: string;
+  date_of_birth: string | null;
+  first_name: string;
+  last_name: string;
+  hobbies: Hobby[];
 }
 
 export interface Profile {
