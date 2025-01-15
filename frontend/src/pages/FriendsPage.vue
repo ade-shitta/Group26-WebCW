@@ -46,13 +46,14 @@
   
   <script lang="ts">
   import { defineComponent } from 'vue';
+  import { Friend, FriendRequest } from '../interfaces';
   
   export default defineComponent({
     data() {
       return {
         title: "Friends Page",
-        friends: [],
-        friendRequests: []
+        friends: [] as Friend[],
+        friendRequests: [] as FriendRequest[],
       };
     },
     mounted() {

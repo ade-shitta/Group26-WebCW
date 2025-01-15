@@ -40,3 +40,14 @@ export interface SimilarUser {
     maxAge?: number | null;
   }
 
+  export interface Friend{
+    id: number;
+    friend_username: string;
+    timestamp: string;
+  }
+
+  export interface FriendRequest{
+    id: number;
+    from_user: string;
+    timestamp: string;
+  }
