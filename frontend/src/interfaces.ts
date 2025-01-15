@@ -39,3 +39,4 @@ export interface SimilarUser {
     minAge?: number | null;
     maxAge?: number | null;
   }
+
