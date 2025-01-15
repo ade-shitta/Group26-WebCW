@@ -304,8 +304,6 @@ export default defineComponent({
       this.newPassword = '';
       this.confirmPassword = '';
       alert('Password changed successfully');
-      // You might want to handle automatic re-login or session refresh here
-      // Optionally, you can trigger a re-login by calling an API to fetch the updated user data
     } else {
       alert('Failed to change password');
     }
