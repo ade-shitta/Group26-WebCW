@@ -37,6 +37,7 @@ def signup_view(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.save()
             # Create associated profile
             Profile.objects.create(user=user)
             login(request, user)
