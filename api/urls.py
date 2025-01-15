@@ -37,4 +37,5 @@ urlpatterns = [
     path('friends/', views.main_spa, name='friends'),
     path('otherusers/',views.main_spa, name = 'otherusers'),
     path('api/profile/add_hobby', views.add_hobby_to_profile, name='add_hobby_to_profile'),
+    path('api/profile/delete_hobby', views.delete_hobby_from_profile, name='delete_hobby_from_profile'),
 ]

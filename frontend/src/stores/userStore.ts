@@ -72,8 +72,7 @@ export const useUserStore = defineStore('user', {
           throw new Error('Failed to update profile');
         }
 
-        // If successful, refresh user data
-        await this.fetchUserProfile();
+        await this.fetchUserProfile(); // Refresh user profile after success
         return { success: true };
       } catch (error) {
         console.error('Error updating profile:', error);
@@ -151,6 +150,43 @@ export const useUserStore = defineStore('user', {
         }
       } catch (error) {
         console.error('Error adding hobby to profile:', error);
+        return { success: false, error };
+      }
+    },
+
+    // Delete a hobby from the user's profile
+    async deleteHobbyFromProfile(hobbyId: number) {
+      try {
+        const csrfToken = getCookie('csrftoken'); // Get the CSRF token from cookies
+
+        if (!csrfToken) {
+          console.error('CSRF token not found.');
+          return { success: false, error: 'CSRF token not found' };
+        }
+
+        const response = await fetch('/api/profile/delete_hobby', {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+          },
+          body: JSON.stringify({ hobby_id: hobbyId }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete hobby from profile');
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          await this.fetchUserProfile(); // Fetch the updated user profile
+          return { success: true };
+        } else {
+          return { success: false, error: data.errors };
+        }
+      } catch (error) {
+        console.error('Error deleting hobby from profile:', error);
         return { success: false, error };
       }
     },

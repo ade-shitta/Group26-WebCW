@@ -26,7 +26,10 @@
         <div class="hobbies">
           <h6>My Hobbies</h6>
           <ul>
-            <li v-for="hobby in userStore.userData.hobbies" :key="hobby.id">{{ hobby.name }}</li>
+            <li v-for="hobby in userStore.userData.hobbies" :key="hobby.id">
+              {{ hobby.name }}
+              <button class="btn btn-danger btn-sm" @click="deleteHobby(hobby.id)">Delete</button>
+            </li>
           </ul>
         </div>
         <!-- Button trigger modal -->
@@ -121,8 +124,8 @@ export default defineComponent({
         date_of_birth: "",
         first_name: "",
         last_name: "",
-        hobbies: [] as Hobby[] // Use Hobby type
-      } as User, //match the User interface 
+        hobbies: [] as Hobby[] // Ensure hobbies field is included
+      } as User,
       newHobby: "",
       selectedHobby: null
     };
@@ -196,15 +199,32 @@ export default defineComponent({
         alert('Error adding hobby: ' + JSON.stringify(result.error));
       }
     },
+    async deleteHobby(hobbyId: number) {
+      const result = await this.userStore.deleteHobbyFromProfile(hobbyId);
+      if (result.success) {
+        this.editForm.hobbies = this.editForm.hobbies.filter(hobby => hobby.id !== hobbyId);
+        if (this.userStore.userData) {
+          this.userStore.userData.hobbies = this.userStore.userData.hobbies.filter(hobby => hobby.id !== hobbyId);
+        }
+      } else {
+        alert('Error deleting hobby: ' + JSON.stringify(result.error));
+      }
+    },
     async saveChanges() {
       const errors = this.validateForm();
       if (errors.length) {
+        alert(errors.join('\n'));
         return;
       }
+
+      // Ensure hobbies field is a list of hobby IDs
+      const hobbyIds = this.editForm.hobbies.map(hobby => hobby.id);
+      const updatedForm = { ...this.editForm, hobbies: hobbyIds };
+
       try {
-        const result = await this.userStore.updateProfile(this.editForm);
+        const result = await this.userStore.updateProfile(updatedForm);
         if (result.success) {
-          console.log('Form is valid, preparing to send request. Data:', this.editForm);
+          console.log('Form is valid, preparing to send request. Data:', updatedForm);
           this.showModal = false;
         } else {
           // handle error
