@@ -33,7 +33,7 @@
                     {{ typeof hobby === 'number' ? hobby : hobby.name }}
                   </td>
                   <td class="text-end">
-                    <button class="btn btn-danger btn-sm"
+                    <button class="btn btn-danger btn-sm" id="deletehobby"
                       @click="deleteHobby(typeof hobby === 'number' ? hobby : hobby.id)">
                       Delete
                     </button>
@@ -45,7 +45,7 @@
         </div>
         <!-- Button trigger modal -->
         <div class="button-container">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"
+          <button id = "edit-profile" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal"
             @click="populateEditForm">
             Edit Profile
           </button>
@@ -68,23 +68,23 @@
             <div class="modal-body">
               <div class="mb-3">
                 <label>First Name</label>
-                <input type="text" class="form-control" v-model="editForm.first_name">
+                <input type="text" id ="editfname" class="form-control" v-model="editForm.first_name">
               </div>
               <div class="mb-3">
                 <label>Last Name</label>
-                <input type="text" class="form-control" v-model="editForm.last_name">
+                <input type="text" id="editlname" class="form-control" v-model="editForm.last_name">
               </div>
               <div class="mb-3">
                 <label>Username</label>
-                <input type="text" class="form-control" v-model="editForm.username">
+                <input type="text" id="editusername" class="form-control" v-model="editForm.username">
               </div>
               <div class="mb-3">
                 <label>Email</label>
-                <input type="email" class="form-control" v-model="editForm.email">
+                <input type="email" id="editemail" class="form-control" v-model="editForm.email">
               </div>
               <div class="mb-3">
                 <label>Date of Birth</label>
-                <input type="date" class="form-control" v-model="editForm.date_of_birth">
+                <input type="date" id="editdob" class="form-control" v-model="editForm.date_of_birth">
               </div>
               <div class="mb-3">
                 <label>Select Existing Hobby</label>
@@ -100,15 +100,15 @@
               <div class="mb-3">
                 <label>Add New Hobby</label>
                 <div class="input-group">
-                  <input type="text" class="form-control" v-model="newHobby">
-                  <button class="btn btn-outline-secondary" type="button" @click="addNewHobby">Add</button>
+                  <input type="text" id="newhobbyadd" class="form-control" v-model="newHobby">
+                  <button class="btn btn-outline-secondary" id="newhobbybutton" type="button" @click="addNewHobby">Add</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="saveChanges" data-bs-dismiss="modal">Save
+            <button id="editsave" type="button" class="btn btn-primary" @click="saveChanges" data-bs-dismiss="modal">Save
               changes</button>
           </div>
         </div>

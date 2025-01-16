@@ -6,10 +6,10 @@
         <div class="row mb-4">
             <div class="col-md-6 mx-auto">
                 <div class="d-flex gap-3 align-items-center">
-                    <input type="number" class="form-control" v-model="minAge" placeholder="Min Age" min="0">
+                    <input type="number" id="minage" class="form-control" v-model="minAge" placeholder="Min Age" min="0">
                     <span>to</span>
-                    <input type="number" class="form-control" v-model="maxAge" placeholder="Max Age" min="0">
-                    <button class="btn btn-primary" @click="applyFilter">Filter</button>
+                    <input type="number" id="maxage" class="form-control" v-model="maxAge" placeholder="Max Age" min="0">
+                    <button id="filterbutton" class="btn btn-primary" @click="applyFilter">Filter</button>
                 </div>
             </div>
         </div>

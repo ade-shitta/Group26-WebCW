@@ -3,7 +3,7 @@
     <header class="main-header">
         <nav class="navbar">
             <div class="nav-right">
-                <button class="btn btn-outline-primary" @click="logout">Logout</button>
+                <button id="logout" class="btn btn-outline-primary" @click="logout">Logout</button>
             </div>
             <div class="nav-links">
                 <router-link class="main-link" :to="{ name: 'Profile Page' }">
@@ -12,7 +12,7 @@
                 <router-link class="main-link" :to="{ name: 'Friends Page' }">
                     Friends
                 </router-link>
-                <router-link class="main-link" :to="{ name: 'Other Users Page' }">
+                <router-link id="otherpage" class="main-link" :to="{ name: 'Other Users Page' }">
                     Other Users
                 </router-link>
             </div>
