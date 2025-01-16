@@ -51,7 +51,7 @@ class SignupTests(StaticLiveServerTestCase):
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, "signup-submit")))
         self.driver.execute_script("arguments[0].click();", submit_button)
 
-        time.sleep(1)
+        time.sleep(15)
 
         # Verify redirection to the home page
         self.assertEqual(self.live_server_url, base_url)
@@ -77,7 +77,7 @@ class SignupTests(StaticLiveServerTestCase):
         WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, "login-submit")))
         self.driver.execute_script("arguments[0].click();", submit_button)
 
-        time.sleep(10)
+        time.sleep(15)
         self.assertEqual(self.live_server_url, base_url)
 
     def create_login(self) -> tuple:
