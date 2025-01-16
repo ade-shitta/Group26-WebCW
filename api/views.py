@@ -105,7 +105,6 @@ def profile_api(request):
             form.save()
             return JsonResponse({'status': 'success'}, status=200)
         else:
-            # Log form errors for debugging
             print(form.errors)
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
@@ -244,7 +243,6 @@ def get_friend_requests(request):
         print(requests_data)
         return JsonResponse({'status': 'success', 'friend_requests': requests_data})
 
-
 @login_required
 @require_http_methods(['POST'])
 def send_request(request):
@@ -256,7 +254,16 @@ def send_request(request):
     if not recipient:
         return JsonResponse({"status": "error", "message": "User not found"}, status=404)
 
-    # Create a friend request
+    # Check if *either* direction already has a pending or accepted request
+    existing_request = Friends.objects.filter(
+        Q(from_user=request.user, to_user=recipient) |
+        Q(from_user=recipient, to_user=request.user),
+        status__in=['sent', 'accepted']
+    ).first()
+
+    if existing_request:
+        return JsonResponse({"status": "success", "message": "Request already exists; doing nothing."}, status=200)
+
     Friends.objects.create(from_user=request.user, to_user=recipient, status='sent')
     return JsonResponse({"status": "success", "message": f"Friend request sent to {username}"})
 

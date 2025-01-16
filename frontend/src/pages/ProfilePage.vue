@@ -285,7 +285,7 @@ export default defineComponent({
   try {
     const csrfToken = getCookie('csrftoken');
 
-    const response = await fetch('http://localhost:8000/api/profile/', {
+    const response = await fetch('/api/profile/', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

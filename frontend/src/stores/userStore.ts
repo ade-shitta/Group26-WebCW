@@ -30,12 +30,12 @@ export const useUserStore = defineStore('user', {
     // Fetch the user profile
     async fetchUserProfile() {
       try {
-        const response = await fetch('http://localhost:8000/api/profile/', {
+        const response = await fetch('/api/profile/', {
           credentials: 'include', // Send cookies along with the request
         });
         if (!response.ok) {
           if (response.status === 403 || response.status === 401) {
-            window.location.href = 'http://localhost:8000/login/';
+            window.location.assign('/login/');
             return;
           }
           throw new Error('Network response was not ok');
@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
         this.userData = data;
       } catch (error) {
         console.error('Error fetching profile:', error);
-        window.location.href = 'http://localhost:8000/login/';
+        window.location.assign('/login/');
       }
     },
 
@@ -66,7 +66,7 @@ export const useUserStore = defineStore('user', {
           )
         };
 
-        const response = await fetch('http://localhost:8000/api/profile/', {
+        const response = await fetch('/api/profile/', {
           method: 'PUT',
           credentials: 'include',
           headers: {
@@ -256,7 +256,7 @@ export const useUserStore = defineStore('user', {
           return { success: false, error: 'CSRF token not found' };
         }
 
-        const response = await fetch('http://localhost:8000/api/send_request/', {
+        const response = await fetch('/api/send_request/', {
           method: 'POST',
           credentials: 'include',
           headers: {
