@@ -27,7 +27,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
     methods: {
         logout() {
-            window.location.href = 'http://localhost:8000/logout/';  // Use the absolute URL
+            window.location.assign("/logout/");  // Use the absolute URL
         }
     }
 })

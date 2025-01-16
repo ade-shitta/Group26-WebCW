@@ -105,7 +105,6 @@ def profile_api(request):
             form.save()
             return JsonResponse({'status': 'success'}, status=200)
         else:
-            # Log form errors for debugging
             print(form.errors)
             return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 

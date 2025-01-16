@@ -46,7 +46,7 @@
   
   <script lang="ts">
   import { defineComponent } from 'vue';
-  import { Friend, FriendRequest } from '../interfaces';
+  import { Friend, FriendRequest } from '../interfaces.ts';
   
   export default defineComponent({
     data() {
@@ -95,7 +95,7 @@
       async fetchFriendRequests() {
         try {
           const csrfToken = await this.getCsrfToken();
-          const response = await fetch('http://localhost:8000/api/get_friend_requests/', {
+          const response = await fetch('/api/get_friend_requests/', {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -118,7 +118,7 @@
       async acceptFriendRequest(requestId: number) {
         try {
           const csrfToken = await this.getCsrfToken();
-          const response = await fetch('http://localhost:8000/api/accept_request/', {
+          const response = await fetch('/api/accept_request/', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -144,7 +144,7 @@
       async rejectFriendRequest(requestId: number) {
         try {
           const csrfToken = await this.getCsrfToken();
-          const response = await fetch('http://localhost:8000/api/reject_request/', {
+          const response = await fetch('/api/reject_request/', {
             method: 'POST',
             credentials: 'include',
             headers: {

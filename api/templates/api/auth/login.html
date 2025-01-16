@@ -8,11 +8,11 @@
         <h2 class="text-center">Login</h2>
     </div>
     <div class="card-body">
-        <form method="post">
+        <form method="post" id="login-form">
             {% csrf_token %}
             {{ form|crispy }}
             <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary" id="login-submit">Login</button>
             </div>
         </form>
         <hr>
