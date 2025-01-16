@@ -26,7 +26,7 @@
                             <p class="mb-1">Age: {{ user.age }}</p>
                             <p class="mb-1">Hobbies: {{ user.hobbies.join(', ') }}</p>
                         </div>
-                        <button class="btn btn-primary" @click="sendFriendRequest(user.username)">Send Friend Request</button>
+                        <button class="btn btn-primary" id="sendfriendbutton" @click="sendFriendRequest(user.username)">Send Friend Request</button>
                     </div>
                 </div>
                 <p v-else class='text-center'>No users found with similar hobbies.</p>
