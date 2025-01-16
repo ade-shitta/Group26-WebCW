@@ -106,15 +106,6 @@ class UserTests(StaticLiveServerTestCase):
         time.sleep(2)
         self.assertEqual(self.live_server_url, base_url)
 
-
-
-    def create_login(self) -> tuple:
-        user = User.objects.create_user(username='testuser')
-        user.set_password('helloworld1234-')
-        user.save()
-        return ("testuser", 'helloworld1234-')
-    
-
     def test_edit(self):
         """
         Full test for the edit functionality 
