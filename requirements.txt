@@ -5,3 +5,8 @@ packaging==24.1
 psycopg2-binary==2.9.9
 sqlparse==0.5.1
 whitenoise==6.7.0
+selenium >= 4.8.0
+django-crispy-forms==2.1
+crispy-bootstrap5==2024.10
+webdriver-manager==4.0.0
+django-cors-headers==3.14.0
