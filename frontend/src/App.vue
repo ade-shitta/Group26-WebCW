@@ -9,7 +9,7 @@
                 <router-link class="main-link" :to="{ name: 'Profile Page' }">
                     Profile
                 </router-link>
-                <router-link class="main-link" :to="{ name: 'Friends Page' }">
+                <router-link id="friendspage" class="main-link" :to="{ name: 'Friends Page' }">
                     Friends
                 </router-link>
                 <router-link id="otherpage" class="main-link" :to="{ name: 'Other Users Page' }">

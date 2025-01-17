@@ -32,7 +32,7 @@
                   <p class="mb-1">Sent on: {{ request.timestamp }}</p>
                 </div>
                 <div>
-                  <button class="btn btn-success" @click="acceptFriendRequest(request.id)">Accept</button>
+                  <button id="acceptfriendbutton" class="btn btn-success" @click="acceptFriendRequest(request.id)">Accept</button>
                   <button class="btn btn-danger" @click="rejectFriendRequest(request.id)">Reject</button>
                 </div>
               </div>
