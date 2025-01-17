@@ -157,17 +157,19 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vue dev server
     "http://localhost:8000",  # Django dev server
+    'https://group26-web-apps-ec22680.apps.a.comp-teach.qmul.ac.uk',
 ]
 
 CORS_TRUSTED_ORIGINS = [
     "http://localhost:5173",  # Vue dev server
     "http://localhost:8000",  # Django dev server
+    'https://group26-web-apps-ec22680.apps.a.comp-teach.qmul.ac.uk',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
-    'https://group26-web-apps-ec22680.apps.a.comp-teach.qmul.ac.uk/',
+    'https://group26-web-apps-ec22680.apps.a.comp-teach.qmul.ac.uk',
 ]
 
 CORS_ALLOW_METHODS = [
