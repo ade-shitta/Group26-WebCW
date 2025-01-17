@@ -1,14 +1,14 @@
-# from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-# from selenium import webdriver
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.common.alert import Alert
-# from django.contrib.auth import get_user_model
-# from .models import User
-# import time
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.alert import Alert
+from django.contrib.auth import get_user_model
+from .models import User
+import time
 
 # class UserTests(StaticLiveServerTestCase):
 #     """
