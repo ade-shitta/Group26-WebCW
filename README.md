@@ -9,6 +9,7 @@ README
 - Sana: Implemented age filter, pagination, similar-hobbies and half of the required tests
 
 ## URL:
+https://group26-web-apps-ec22680.apps.a.comp-teach.qmul.ac.uk/
 
 ## USERS:
 - Admin account: Username: user | Password: test
@@ -20,4 +21,4 @@ README
 - Created user: Erica Cross | Username: ericacross | Email: ericacross@example.com | Password: w5BozFTh+$
 - Created user: George Ramsey | Username: georgeramsey | Email: georgeramsey@example.com | Password: $3Tb6j0EWi
 
-#### Full User list can be found in the 'user.txt' file
+#### Full User list can be found in the 'user_data.txt' file
