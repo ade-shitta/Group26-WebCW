@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv(
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -167,6 +167,7 @@ CORS_TRUSTED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8000",
+    'https://group26-web-apps-ec22680.apps.a.comp-teach.qmul.ac.uk/',
 ]
 
 CORS_ALLOW_METHODS = [
